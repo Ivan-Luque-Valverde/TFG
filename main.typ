@@ -4,17 +4,17 @@
 
 #show: tfg_etsi_us_template.with(
   // El título del TFG
-  "Formato de Publicación de la Escuela Técnica Superior de Ingeniería",
+  "Simulación de un sistema de Pick and Place con un robot Braccio Tinkerkit de Arduino bajo ROS 2",
   // El grado de la titulación, e.g. Ingeniería Industrial
-  "Ingeniería de las Tecnologías de Telecomunicación",
+  "Ingeniería Electrónica, Robótica y Mecatrónica",
   // Nombre y apellidos del autor
-  "Nombre Apellidos",
+  "Iván Luque Valverde",
   // Nombre y apellidos del tutor (o tutores)
-  "Nombre Apellidos",
+  "Federico Cuesta Rojo",
   // Título del tutor, p.ej. Profesor Asociado
   "Profesor Titular",
   // Nombre del departamento asociado
-  "Dpto. Teoría de la Señal y Comunicaciones",
+  "Dpto. Ingeniería de Sistemas y Automática",
   // Año del TFG (Por defecto el año de compilación del archivo)
   // year: 2024
   // Activar el modo de desarrollo o no, por ahora sólo muestra la fecha del documento en la esquina superior derecha de la cubierta.
@@ -52,16 +52,16 @@
 #main-content[
   // Las páginas de aquí junto a los títulos definidos usan numeración arábiga
   // comenzando desde 1. Usado para el contenido principal del TFG
-  = Capítulo
+  = Introducción
   // Ejemplo de uso de la función first-letter
   #first-letter([#lorem(50)])
   #pagebreak(to: "odd")
 
-  == Subsección
+  == Motivación del proyecto
   #lorem(50)
   #pagebreak(to: "odd")
 
-  === Subsección2
+  == Objetivos del Trabajo
   #lorem(50)
   
   #figure(table(
@@ -72,7 +72,11 @@
   [B], [B], [B],
   ),caption:  "Tabla de prueba")
 
-  ==== Subsección3
+  == Estado del arte
+
+  === Robots manipuladores industriales
+
+  
   #lorem(50)
   #figure(image("template/figures/Logo.svg",width: 16%),caption:"Imagen de prueba")
 
