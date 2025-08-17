@@ -63,6 +63,7 @@
 
   == Objetivos del Trabajo
   #lorem(50)
+  // Simulación, puesta a punto, repositorio a funcionar...
   
   #figure(table(
   columns: (auto, auto, auto),
@@ -71,10 +72,72 @@
   [A], [A], [A],
   [B], [B], [B],
   ),caption:  "Tabla de prueba")
+  == Enfoque y metodología
 
-  == Estado del arte
 
-  === Robots manipuladores industriales
+  = Estado del arte
+
+  == Introducción
+  Breve contexto sobre la importancia de las tareas pick‑and‑place en robótica, tanto en entornos industriales como educativos. Se define el alcance: simulación y validación de un Braccio Tinkerkit controlado desde Arduino y ROS 2, con foco en percepción, planificación y transferencia sim‑to‑real.
+
+  == Robótica manipuladora y aplicaciones pick and place
+  Tipos de manipuladores (seriales, paralelos), grados de libertad habituales y requisitos clave: precisión, repetibilidad, carga útil y velocidad. Revisión de aplicaciones: automatización industrial, logística ligera, ensamblaje y uso en docencia e investigación.
+
+  == Braccio Tinkerkit, solución educativa
+  Descripción técnica breve (arquitectura, servos, rango de movimiento, limitaciones de carga/peso). Ventajas como plataforma educativa y limitaciones prácticas para tareas industriales; ejemplos y trabajos previos que usan Braccio o robots similares.
+
+  = Plataformas de desarrollo y simulación
+    Comparativa de herramientas relevantes: ROS 2 (comunicación DDS, ecosistema), MoveIt2 (planificación), Gazebo / Ignition, Webots, PyBullet (simulación física), MATLAB/Simulink (modelado). Ventajas y limitaciones de cada una para proyectos de bajo coste.
+  = Diseño del sistema
+    == Modelado del robot: URDF/SDF y recursos
+  Cómo describir un manipulador en URDF/SDF: articulaciones, eslabones, masas/inercia y meshes. Buenas prácticas: simplificar colisiones, documentar parámetros dinámicos y mantener congruencia entre modelo visual y de colisión.
+
+    == Simulación física y fidelidad
+  Motores físicos comunes (ODE, Bullet, DART, Chrono) y su tratamiento de contactos, fricción y servos. Impacto de la fidelidad en planificación y en la transferencia sim‑to‑real; necesidad de identificación de parámetros dinámicos para validar la simulación.
+
+   == Repositorio ROS2 referencia
+  Estructura del repositorio, principales nodos y paquetes, y su relación con el hardware y la simulación. Ejemplos de uso y pruebas.
+
+= Percepción y localización de objetivos
+  Sensores habituales: cámaras RGB, RGB‑D y marcadores fiduciales. Técnicas: detección y segmentación de objetos (OpenCV, redes CNN), estimación de pose 6‑DoF, uso de PCL para nubes de puntos. Conjuntos de datos y benchmarks (YCB, etc.).
+  == Detección de objetos
+
+  == Matriz de transformación y calibración
+
+  == Matriz de homografía
+
+= Planificación de agarre y manipulación
+  Algoritmos y herramientas: OMPL, MoveIt2 para planificación de trayectorias; GraspIt!, Dex‑Net y enfoques basados en aprendizaje para planificación de agarres. Métricas de calidad del agarre y problemas prácticos (contactos, incertidumbre en fricción).
+  == Cinemática directa e inversa
+
+= Integración hardware–software y control
+  Conexión Arduino ↔ ROS 2: rosserial, micro‑ROS, drivers custom; uso de ros2_control y controladores en tiempo real. Retos: latencias, interpolación de servos hobby, límites de torque y seguridad en lazo cerrado.
+
+  == Transferencia sim‑to‑real y validación experimental
+  Técnicas para reducir la brecha: domain randomization, calibración de cámara y brazo, system identification y HIL. Diseño experimental para comparar simulación y prototipo real, incluyendo métricas y repetibilidad.
+
+= Evaluación y métricas
+  Métricas recomendadas: tasa de éxito del pick‑and‑place, error de posicionamiento, tiempo por ciclo, repetibilidad y robustez ante variaciones de objeto/escenario. Protocolo de pruebas y análisis estadístico básico.
+= Huecos detectados y oportunidades para el TFG
+  Resumen de cuestiones poco cubiertas en la literatura: modelos dinámicos de alta fidelidad para robots educativos, pipelines integrados Arduino+micro‑ROS+MoveIt2, datasets para piezas educativas; propuestas: modelado URDF/SDF del Braccio, pipeline RGB‑D para pose, integración y validación sim‑to‑real.
+
+  // Referencias sugeridas para Bibliografía:
+  // - Documentación: ROS 2, MoveIt2, Gazebo/Ignition, PyBullet
+  // - Herramientas/Artículos: Dex‑Net, GraspIt!, surveys sobre sim‑to‑real, papers sobre ros2_control y micro‑ROS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   
   #lorem(50)
