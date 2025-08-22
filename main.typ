@@ -53,40 +53,36 @@
   // Las páginas de aquí junto a los títulos definidos usan numeración arábiga
   // comenzando desde 1. Usado para el contenido principal del TFG
   = Introducción
-  El presente documento titulado "_Simulación de un sistema de Pick and Place con un robot Braccio Tinkerkit de Arduino bajo ROS 2_" es el trabajo presentado para superar el Trabajo de Fin de Grado del Grado de Ingeniería Electrónica, Robótica y Mecatrónica. 
+  #first-letter[
+    El presente documento titulado "_Simulación de un sistema de Pick and Place con un robot Braccio Tinkerkit de Arduino bajo ROS 2_" es el trabajo presentado para superar el Trabajo de Fin de Grado del Grado de Ingeniería Electrónica, Robótica y Mecatrónica.
+  ]
   
-   El consiguiente aborda la simulación y validación de un sistema de recolección, clasificación y colocación  basado en el kit educativo Braccio Tinkerkit, controlado por una placa Arduino UNO y coordinado desde ROS 2 Humble. 
-  
+  El consiguiente aborda la simulación y validación de un sistema de recolección, clasificación y colocación de elementos, basado en el kit educativo Braccio Tinkerkit, controlado por una placa Arduino UNO y coordinado desde ROS 2 Humble. 
+  \
   La relevancia recae en el uso de los robots manipuladores en tareas de automatización y docencia, justificando el uso de plataformas de bajo coste para experimentar técnicas de percepción, planificación y control previas a la transferencia al robot físico. 
-  Este aumento de la integración de la robótica en la educación ha demostrado un aumento en el interés de los estudiantes por la ingeniería y la tecnología, así como una mejora en su comprensión de conceptos complejos, la resolución de problemas, el trabajo en equipo y la creatividad, tal como se indica en @emb. 
+  Este incremento de la robótica en la educación ha demostrado un aumento en el interés de los estudiantes por la ingeniería y la tecnología, así como una mejora en su comprensión de conceptos complejos, la resolución de problemas, el trabajo en equipo y la creatividad @emb. 
   
-  == Motivación del proyecto
+  == Motivación del proyecto 
+Este proyecto nace como una combinación de motivos personales, formativos y profesionales.
+\
+\
+Desde un punto de vista personal, siempre he tenido un gran interés por la robótica y la automatización, fascinado por cómo las máquinas pueden interactuar con el mundo físico y realizar tareas complejas. Desde bien pequeño recuerdo el entusiasmo al desenvolver un regalo y descubrir un kit de construcción como el mostrado en la @fig-meccano, otorgándome horas innumerables de diversión y aprendizaje mientras ensamblaba y la enorme satisfacción al comprobar que, tras todo ese esfuerzo, había construido un robot que funcionaba. Finalmente, esos pequeños kits de construcciones, laboratorios o electrónica, fueron construyendo mi pasión por la robótica y la tecnología.
+\
+\
+Desde un punto de vista formativo, este proyecto representa una oportunidad para aplicar y consolidar los conocimientos adquiridos a lo largo de la carrera, especialmente en áreas como la programación, la robótica y la percepción. Trabajar durante la asignatura _Laboratorio de Robótica_ con un robot ABB IRB 120 despertó mi entusiasmo por este tipo de robots manipuladores, enlazado con los conocimientos adquiridos durante las asignaturas _Sistemas de Percepción_ y _Ampliación de Robótica_ constituyeron la oportunidad ideal para unificar estos conocimientos bajo el mismo proyecto. 
 
+#figure(image("template/figures/mecano.jpg", width: 50%), caption: [Juguete para niños, kit de construcción de un vehículo todo-terreno Meccano]) <fig-meccano>
 
-
-
-El objetivo es diseñar una cadena completa software‑hardware que incluya la modelización del manipulador (URDF/SDF), la integración de nodos ROS 2 para control y comunicación con Arduino (rosserial o micro‑ROS), la incorporación de MoveIt2 para planificación de trayectorias y una pipeline de percepción para localización de objetos. La simulación se emplea para prototipado rápido, ajuste de parámetros y evaluación de rendimiento; se plantea además un protocolo experimental para comparar resultados en simulador y en el robot real (sim‑to‑real), cuantificando métricas como tasa de éxito, error de posicionamiento y tiempo por ciclo.
-
-El documento está organizado en: estado del arte y herramientas de simulación, diseño y modelado del sistema, integración hardware‑software y control, implementación de la pipeline de percepción y planificación, protocolo experimental y análisis de resultados, y conclusiones con oportunidades de mejora y líneas futuras de trabajo.
-
-  #lorem(50)
-  #pagebreak(to: "odd")
+Finalmente, desde un punto de vista profesional, la experiencia adquirida en este proyecto será un valioso activo en mi futura carrera. La entrada en un ecosistema como ROS 2, apenas explorado durante la carrera, representa una oportunidad para adquirir habilidades demandadas en el mercado laboral tales como la búsqueda e implementación de repositorios o el manejo de un sistema de nodos y publicaciones. La robótica es un campo en constante evolución y crecimiento, y contar con experiencia práctica en el desarrollo de sistemas robóticos me posicionará favorablemente en el mercado laboral.
 
   == Objetivos del Trabajo
-  #lorem(50)
-  // Simulación, puesta a punto, repositorio a funcionar...
-  
-  #figure(table(
-  columns: (auto, auto, auto),
-  inset: 10pt,
-  align: horizon,
-  [A], [A], [A],
-  [B], [B], [B],
-  ),caption:  "Tabla de prueba")
-  == Enfoque y metodología
 
-
-  = Estado del arte
+Este trabajo tiene como objetivo principal el diseño y desarrollo de un sistema de simulación para un robot manipulador, utilizando el kit Braccio Tinkerkit y ROS 2. Se busca crear un entorno virtual que permita la experimentación y validación de algoritmos de control y percepción, facilitando la transferencia de estos al robot físico.
+\
+\
+De forma complementaria, se pretende establecer un flujo de trabajo que integre la simulación con el robot físico, permitiendo la validación de los algoritmos en un entorno real. Esto incluye la creación de un repositorio completamente modular donde la adición de nuevos elementos se realice de forma sencilla e intuitiva, asegurando la escalabilidad y flexibilidad de ambos sistemas. 
+Para ello, en primer lugar, se ha seleccionado un repositorio existente en GitHub como base inicial y funcional para el desarrollo del sistema @repo. A continuación, se ha modelado hacia el objetivo deseado, adaptando y ampliando las funcionalidades del repositorio original con nuevas características referenciadas en otros repositorios. Finalmente, se ha implementado y probado el sistema tanto en simulación como en el robot físico, evaluando su rendimiento y realizando ajustes según sea necesario.
+= Estado del arte
 
   == Introducción
   Breve contexto sobre la importancia de las tareas pick‑and‑place en robótica, tanto en entornos industriales como educativos. Se define el alcance: simulación y validación de un Braccio Tinkerkit controlado desde Arduino y ROS 2, con foco en percepción, planificación y transferencia sim‑to‑real.
@@ -97,8 +93,68 @@ El documento está organizado en: estado del arte y herramientas de simulación,
   == Braccio Tinkerkit, solución educativa
   Descripción técnica breve (arquitectura, servos, rango de movimiento, limitaciones de carga/peso). Ventajas como plataforma educativa y limitaciones prácticas para tareas industriales; ejemplos y trabajos previos que usan Braccio o robots similares.
 
-  = Plataformas de desarrollo y simulación
-    Comparativa de herramientas relevantes: ROS 2 (comunicación DDS, ecosistema), MoveIt2 (planificación), Gazebo / Ignition, Webots, PyBullet (simulación física), MATLAB/Simulink (modelado). Ventajas y limitaciones de cada una para proyectos de bajo coste.
+= Plataformas de desarrollo y simulación
+  El manipulador Braccio Tinkerkit forma parte del ecosistema Arduino, tal como se ha mencionado previamente. Debido a esta característica, puede ser simulado y controlado a través de diversas plataformas y herramientas; siendo Matlab y ROS las más destacadas en el ámbito académico y de investigación.
+
+  == Matlab
+  Matlab/Simulink es un entorno de computación numérica y programación que ofrece un ecosistema integrado para el diseño, la simulación y la implementación de sistemas, incluyendo aplicaciones de robótica. A través de toolboxes específicos como _Robotics System Toolbox_ y _Simscape_ proporciona un entorno gráfico y basado en scripts para modelar y simular robots @simscape.
+
+  == ROS
+  ROS (Robot Operating System) es un framework de código abierto caracterizado por ser el estándar para la investigación y el desarrollo en robótica. Facilita la comunicación y la gestión de procesos en un robot a través de un modelo de "nodos" que se comunican de forma centralizada @melodic.
+
+  == ROS 2
+  ROS2 (Robot Operating System 2) es la nueva generación de ROS, diseñada para abordar las limitaciones de la primera versión y adaptarse a las necesidades actuales de la robótica. Está pensada para aplicaciones industriales, sistemas multi-robot y sistemas en tiempo real, mediante una arquitectura de comunicación descentralizada @repo.
+
+
+== Comparativa 
+
+  #figure(table(
+    columns: (auto, auto, auto, auto),
+    inset: 6pt,
+    align: horizon,
+    [Característica], [MATLAB], [ROS], [ROS2],
+
+    [Curva de Aprendizaje], [Baja. Entorno gráfico muy intuitivo, visual y didáctico.], [Media. Requiere aprender conceptos (nodos, tópicos, servicios), la compilación catkin y el uso de la terminal.], [Alta. Similar a ROS1 pero con herramientas y conceptos más modernos.],
+
+    [Coste], [Comercial: Requiere licencias para Matlab, Simulink y algunos toolboxes.], [Gratuito y Código Abierto.], [Gratuito y Código Abierto.],
+
+    [Arquitectura de Comunicación], [Monolítica e integrada, simple y directa.], [Centralizada: Depende de un nodo maestro (roscore), que actúa como servidor de nombres.], [Descentralizada: Usa el protocolo DDS (Data Distribution Service); sin nodo maestro y mayor robustez y flexibilidad.],
+
+    [Simulación], [Simscape Multibody para simulación dinámica y 3D. Buena pero no tan realista.], [Gazebo para física realista.], [Gazebo/Ignition y otros simuladores modernos.],
+
+    [Planificación de Movimiento], [Robotics System Toolbox.], [MoveIt: estándar maduro y con gran comunidad.], [MoveIt2: versión para ROS2 en desarrollo activo.],
+
+    [Soporte para Braccio], [Requiere importar URDF y configurar comunicación con Arduino. Escasos proyectos disponibles.], [Excelente: variedad de paquetes y tutoriales disponibles.], [Correcto: menor variedad de paquetes, con posibilidad de portar código de ROS1.],
+
+    [Comunidad], [Fuerte soporte oficial (MathWorks) y comunidad académica.], [Inmenso pero en declive: muchos paquetes obsoletos; sin nuevas versiones principales.], [En crecimiento y activo: foco de la nueva investigación y desarrollo.],
+  ), caption: "Tabla comparativa entre MATLAB, ROS y ROS2 como opciones para la simulación y control del manipulador.")
+
+
+// seguir por aqui, hablar mas a fondo de moveit2 y ros2, asi como una conclusion final de lo mejor (mirar google ai studio).
+
+
+
+  Simulación física, planificación y visualización — herramientas clave
+  - MoveIt2: framework de planificación de agarres y trayectorias compatible con ROS 2 y `ros2_control`; central para generar movimientos pick‑and‑place reproducibles.
+  - Gazebo / Ignition: simulador físico completo con tratamiento de contactos, sensores y plugins; apropiado cuando la fidelidad física (fricción, choques) es importante para la transferencia sim‑to‑real.
+  - RViz: herramienta de visualización y depuración (TF, tópicos, planes). No realiza simulación física pero es imprescindible para interpretar el comportamiento del sistema en ROS.
+  - PyBullet / Bullet: simulador ligero y rápido, útil para prototipado y algoritmos de aprendizaje; menos integrado con el ecosistema ROS pero muy eficiente en iteraciones rápidas.
+  - Webots / CoppeliaSim: entornos todo‑en‑uno con ejemplos educativos y buenas capacidades de scripting; convenientes si se busca rapidez de arranque y facilidad de uso.
+
+  Criterios de elección
+  La selección entre estas opciones debe basarse en: fidelidad física requerida (contactos, fricción), integración con ROS 2/MoveIt2, velocidad de iteración, disponibilidad de modelos y sensores, y recursos (licencias, tiempo). Para pruebas orientadas a sim‑to‑real la combinación MoveIt2 + Gazebo/Ignition proporciona un buen balance entre integración y fidelidad; para experimentos rápidos o aprendizaje por refuerzo, PyBullet es una alternativa eficaz.
+
+  Recomendación práctica para este TFG
+  Se sugiere adoptar un flujo centrado en ROS 2: usar MoveIt2 para planificación de agarres y trayectorias, Gazebo/Ignition para pruebas físicas detalladas y RViz para depuración y visualización. Emplear PyBullet solo como complemento para prototipado rápido o pruebas de algoritmos. Para la conexión con Arduino, `rosserial` es adecuado en prototipos iniciales; si se requiere mayor integración con ROS 2 o restricciones embebidas, valorar `micro-ROS`. Cuando sea necesario realizar identificación de parámetros o diseño de control avanzado, MATLAB/Simulink puede emplearse de forma complementaria.
+
+  Esta combinación ofrece un equilibrio entre reproducibilidad, fidelidad y velocidad de desarrollo, y facilita la transferencia de algoritmos desde la simulación al robot físico Braccio Tinkerkit.
+
+    
+
+
+
+
+
   = Diseño del sistema
      == Repositorio ROS2 referencia
   Estructura del repositorio, principales nodos y paquetes, y su relación con el hardware y la simulación. Ejemplos de uso y pruebas.
