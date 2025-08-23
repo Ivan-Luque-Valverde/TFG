@@ -1,6 +1,6 @@
 #import "template/lib.typ": tfg_etsi_us_template, pre-content, main-content, post-content, index,first-letter
 
-#set text(font: ("Times New Roman", "Tinos"))
+#set text(font: ("Times New Roman"))
 
 #show: tfg_etsi_us_template.with(
   // El título del TFG
@@ -94,19 +94,20 @@ Para ello, en primer lugar, se ha seleccionado un repositorio existente en GitHu
   Descripción técnica breve (arquitectura, servos, rango de movimiento, limitaciones de carga/peso). Ventajas como plataforma educativa y limitaciones prácticas para tareas industriales; ejemplos y trabajos previos que usan Braccio o robots similares.
 
 = Plataformas de desarrollo y simulación
-  El manipulador Braccio Tinkerkit forma parte del ecosistema Arduino, tal como se ha mencionado previamente. Debido a esta característica, puede ser simulado y controlado a través de diversas plataformas y herramientas; siendo Matlab y ROS las más destacadas en el ámbito académico y de investigación.
-
-  == Matlab
+  El manipulador Braccio Tinkerkit forma parte del ecosistema Arduino, tal como se ha mencionado previamente. Debido a esta característica, puede ser simulado y controlado a través de diversas plataformas, destacando Matlab y ROS; siendo Gazebo, MoveIt y PyBullet las principales herramientas de simulación a destacar.
+  == Plataformas de desarrollo
+  === Matlab
   Matlab/Simulink es un entorno de computación numérica y programación que ofrece un ecosistema integrado para el diseño, la simulación y la implementación de sistemas, incluyendo aplicaciones de robótica. A través de toolboxes específicos como _Robotics System Toolbox_ y _Simscape_ proporciona un entorno gráfico y basado en scripts para modelar y simular robots @simscape.
 
-  == ROS
+  === ROS
   ROS (Robot Operating System) es un framework de código abierto caracterizado por ser el estándar para la investigación y el desarrollo en robótica. Facilita la comunicación y la gestión de procesos en un robot a través de un modelo de "nodos" que se comunican de forma centralizada @melodic.
 
-  == ROS 2
+  === ROS 2
   ROS2 (Robot Operating System 2) es la nueva generación de ROS, diseñada para abordar las limitaciones de la primera versión y adaptarse a las necesidades actuales de la robótica. Está pensada para aplicaciones industriales, sistemas multi-robot y sistemas en tiempo real, mediante una arquitectura de comunicación descentralizada @repo.
 
+  #figure(image("template/figures/2024 ROS Metrics Report.png", width: 70%), caption: [Tabla comparativa del incremento de descargas de ROS 2, siendo Humble y Jazzy sus exponentes, frente a la decadencia de las distribuciones anteriores, destacando Noetic como última versión de ROS 1 @ros_metrics.]) <fig-ros2>
 
-== Comparativa 
+=== Comparativa de las plataformas
 
   #figure(table(
     columns: (auto, auto, auto, auto),
@@ -128,28 +129,50 @@ Para ello, en primer lugar, se ha seleccionado un repositorio existente en GitHu
 
     [Comunidad], [Fuerte soporte oficial (MathWorks) y comunidad académica.], [Inmenso pero en declive: muchos paquetes obsoletos; sin nuevas versiones principales.], [En crecimiento y activo: foco de la nueva investigación y desarrollo.],
   ), caption: "Tabla comparativa entre MATLAB, ROS y ROS2 como opciones para la simulación y control del manipulador.")
+#linebreak()
+Tras comparar estas tres vertientes y en función de los objetivos formativos y profesionales planteados, la elección recomendada es ROS 2.
+El mayor problema del mismo recae en su complejidad, pues requiere de una mayor inversión inicial de tiempo para aprender sus herramientas y conceptos, así como de la instalación de un sistema operativo (Ubuntu) y los paquetes necesarios para su funcionamiento (ROS 2 Humble, Gazebo, RViz, MoveIt2, etc). 
+
+Sin embargo, aporta ventajas claras como su arquitectura descentralizada, un mejor soporte para requisitos de fiabilidad y tiempo real, integración con MoveIt2 y un ecosistema creciente orientado a la robótica profesional y de investigación.
 
 
-// seguir por aqui, hablar mas a fondo de moveit2 y ros2, asi como una conclusion final de lo mejor (mirar google ai studio).
 
 
+  == Simuladores, planificadores y visores en ROS 2
 
-  Simulación física, planificación y visualización — herramientas clave
-  - MoveIt2: framework de planificación de agarres y trayectorias compatible con ROS 2 y `ros2_control`; central para generar movimientos pick‑and‑place reproducibles.
-  - Gazebo / Ignition: simulador físico completo con tratamiento de contactos, sensores y plugins; apropiado cuando la fidelidad física (fricción, choques) es importante para la transferencia sim‑to‑real.
-  - RViz: herramienta de visualización y depuración (TF, tópicos, planes). No realiza simulación física pero es imprescindible para interpretar el comportamiento del sistema en ROS.
-  - PyBullet / Bullet: simulador ligero y rápido, útil para prototipado y algoritmos de aprendizaje; menos integrado con el ecosistema ROS pero muy eficiente en iteraciones rápidas.
-  - Webots / CoppeliaSim: entornos todo‑en‑uno con ejemplos educativos y buenas capacidades de scripting; convenientes si se busca rapidez de arranque y facilidad de uso.
+  A continuación se ofrece una comparativa práctica y orientada a decisiones entre las herramientas más relevantes del ecosistema ROS 2 en tres áreas: simulación física, planificación y visualización.
 
-  Criterios de elección
-  La selección entre estas opciones debe basarse en: fidelidad física requerida (contactos, fricción), integración con ROS 2/MoveIt2, velocidad de iteración, disponibilidad de modelos y sensores, y recursos (licencias, tiempo). Para pruebas orientadas a sim‑to‑real la combinación MoveIt2 + Gazebo/Ignition proporciona un buen balance entre integración y fidelidad; para experimentos rápidos o aprendizaje por refuerzo, PyBullet es una alternativa eficaz.
+  === Simuladores físicos
+  - Gazebo: simulador con soporte para SDF/URDF, tratamiento de contactos y sensores, plugins en C++/Python y buena integración con ROS 2. Destaca por su alta fidelidad física y un ecosistema maduro de plugins y sensores, ideal para pruebas sim‑to‑real. Su principal limitación es una instalación y configuración más compleja, con un coste computacional mayor.
 
-  Recomendación práctica para este TFG
-  Se sugiere adoptar un flujo centrado en ROS 2: usar MoveIt2 para planificación de agarres y trayectorias, Gazebo/Ignition para pruebas físicas detalladas y RViz para depuración y visualización. Emplear PyBullet solo como complemento para prototipado rápido o pruebas de algoritmos. Para la conexión con Arduino, `rosserial` es adecuado en prototipos iniciales; si se requiere mayor integración con ROS 2 o restricciones embebidas, valorar `micro-ROS`. Cuando sea necesario realizar identificación de parámetros o diseño de control avanzado, MATLAB/Simulink puede emplearse de forma complementaria.
+  - PyBullet: motor ligero y rápido, fácil de usar desde Python, muy útil para prototipado rápido, simulación de grandes lotes y experimentos de aprendizaje por refuerzo. Destaca por su velocidad y simplicidad, pero con una integración con ROS 2 menos directa y una simulación de sensores más limitada.
 
-  Esta combinación ofrece un equilibrio entre reproducibilidad, fidelidad y velocidad de desarrollo, y facilita la transferencia de algoritmos desde la simulación al robot físico Braccio Tinkerkit.
+  - Webots: entorno todo‑en‑uno con fuerte enfoque educativo y ejemplos listos. Destaca por su rápido arranque y buen soporte de sensores. Su mayor limitante es constar de un modelo de licencias para ciertas características, con un ecosistema menor optimizado para investigación avanzada.
 
-    
+  === Planificación
+  - MoveIt2: framework principal para planificación de movimiento en ROS 2, integra OMPL, planificación de trayectoria, planificación de agarres y soporte para _ros2_control_. Pese a ser un sistema complejo, la integración directa con ROS 2 y sus herramientas para planificación y ejecución lo posicionan como una opción robusta para aplicaciones robóticas, mejorando a su predecesor.
+
+  - OMPL (Open Motion Planning Library): librería de planificadores sampling‑based (RRT, PRM, etc.) usada por MoveIt2. Ofrece una amplia gama de algoritmos, siendo muy configurable. Sin embargo, requiere de un framework que gestione escenas y la ejecución de planes, por lo que se usa típicamente junto a MoveIt2.
+
+  === Visualización y depuración
+  - RViz2: visor 3D estándar en ROS 2; muestra TF, tópicos, nubes, planes y estados del robot. Su principal ventaja es la integración nativa, siendo extensible mediante displays y plugins. Sin embargo, no ofrece grandes diferencias frente a Rviz, compartiendo su interfaz clásica. 
+
+  - Foxglove Studio: herramienta moderna de visualización basada en web/desktop con soporte para ROS 2. Ofrece una interfaz moderna, con trazado de datos y vistas configurables. Se encuentra peor integrada en MoveIt2, pero su popularidad está en aumento y se están desarrollando más tutoriales y recursos para su uso.
+
+  === Elección de herramientas
+
+En base a las características y limitaciones de cada herramienta, se puede diseñar un mapa de flujos de trabajo estratégicos para el desarrollo en la robótica moderna. El ecosistema ROS2 se nutre de una caja de herramientas modular donde la elección correcta depende directamente de la fase y el objetivo del proyecto.
+\
+\
+Para un desafío como el "pick and place" del Braccio Tinkerkit, utilizar un prototipo rápido en PyBullet puede ser útil para la validación de un nuevo algoritmo de agarre en minutos, así como la familiarización con el entorno de los robots manipuladores.
+Una vez validado, la simulación de alta fidelidad en Gazebo garantiza que la trayectoria es físicamente coherente y que los sensores responderían correctamente, construyendo la confianza necesaria para el paso al hardware.
+Finalmente, la abstracción que provee ros2_control actúa como el puente crucial que permite que el mismo código, planificado con MoveIt2, opere de forma idéntica en el simulador y en el robot físico.
+Este enfoque, visualizado con la claridad de RViz2 y las herramientas de GUI que nos ofrece, completa un sistema perfectamente integrado en el entorno de la robótica industrial, pudiendo amplificar horizontes con la potencia de datos de Foxglove Studio. 
+\
+\
+No obstante, para el proyecto actual, se ha optado por la combinación de Gazebo, MoveIt2 y RViz2, dada su integración nativa y comodidad, dejando la puerta abierta a Foxglove para futuras iteraciones.
+
+
 
 
 
