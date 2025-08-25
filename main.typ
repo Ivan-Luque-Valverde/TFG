@@ -27,7 +27,24 @@
   // definidos no están numerados. Usado para índice, agradecimientos,
   // introducción, abstracto/resumen, ...
   = Agradecimientos
-  #lorem(100)
+  En primer lugar, quiero expresar mi más sincero agradecimiento a mi familia, mis padres y hermano que no han dudado nunca de mí y me han apoyado incondicionalmente en cada paso de mi vida académica y personal. Sin ese empujón para luchar por aquello que deseaba desde pequeño, no estaría aquí hoy.
+\ \
+#linebreak()
+  A continuación, me gustaría agradecer a mi tutor, Federico Cuesta Rojo, por abrirme las puertas a embarcarme en este proyecto increíble que enlaza la robótica manipuladora con la percepción y control. Gracias por su orientación, experiencia y apoyo a lo largo de este proyecto. 
+\ \
+ #linebreak()
+  Una ingeniería es un camino largo y muy complicado. Cómo no agradecer a todos aquellos compañeros, amigos, que me llevo de este viaje y que han hecho de la universidad un hogar, un lugar mucho más ameno donde las risas y los buenos momentos han sido la tónica dominante incluso en las largas sesiones de estudio. Sin duda, me llevo un pedacito de cada uno de vosotros.
+\ \
+  #linebreak()
+  
+  Finalmente, agradecer a todas aquellas personas que, de una forma u otra, han aportado su granito de arena para que este proyecto haya sido posible. Desde aquellos maestros que me enseñaron las bases de la tecnología, matemáticas y física en el instituto, hasta la propia universidad de Sevilla por darme la oportunidad de formarme y crecer como persona y ahora, como ingeniero.
+  
+\ \ \
+  
+  #align(right, text([_Iván Luque Valverde_]))
+\
+  #align(right, text([_Sevilla, 2025_]))
+
   #pagebreak(to: "odd")
 
   = Resumen
@@ -195,7 +212,6 @@ Está organizado en varios paquetes que gestionan diferentes aspectos del sistem
 
 #linebreak()
 
-// Insertar imagen simulación cargada con Rviz y Gazebo solo
   #figure(image("template/figures/Sim_base.png", width: 80%), caption: [Ilustración de la simulación en RViz y Gazebo del robot manipulador realizando una trayectoria. En la pantalla izquierda, se puede observar el brazo en sus posiciones inicial, actual y final. A su derecha, la representación de Gazebo mostrando esa posición actual junto al entorno simulado.]) 
 
 
@@ -237,8 +253,6 @@ El robot manipulador Braccio se describe principalmente en la carpeta _braccio_d
 \
 Adicionalmente, se encuentra _braccio.ros2_control.xacro_, quién apunta a _braccio_controllers.yml_, donde se especifican los controladores PID para cada articulación del robot, así como la configuración de los actuadores y sensores. 
 
-/* Insertar imagen solo del robot en gazebo, probar con view_robot.launch.py y quizás estructura de carpeta braccio_description */
-
 #linebreak()
 
 #figure(
@@ -249,7 +263,7 @@ Adicionalmente, se encuentra _braccio.ros2_control.xacro_, quién apunta a _brac
   caption: [Representación del robot Braccio Tinkerkit en Gazebo, mostrando dos perspectivas diferentes del manipulador.]
 )
 
-== Spawner de Cámara y cubos
+== Spawner de Cámara y Cubos
   Para la simulación de tareas de percepción y manipulación, se han añadido varios elementos al entorno de Gazebo. El ejecutable encargado de esta acción es _vision_simulation.launch.py_, ubicado en la carpeta _launch_ del paquete _braccio_vision_. Este ejecutable lanza el mundo junto al robot y, pasado un tiempo, inicia el spawner de la cámara y los cubos.
 #linebreak()
 \
