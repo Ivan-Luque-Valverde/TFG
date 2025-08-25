@@ -1,5 +1,5 @@
 #import "template/lib.typ": tfg_etsi_us_template, pre-content, main-content, post-content, index,first-letter
-
+#let col2 = grid.with(columns: (0.5fr, 0.5fr), gutter: 5pt)
 #set text(font: ("Times New Roman"))
 
 #show: tfg_etsi_us_template.with(
@@ -195,11 +195,17 @@ Está organizado en varios paquetes que gestionan diferentes aspectos del sistem
 
 #linebreak()
 
-El repositorio está diseñado para funcionar en dos modos, que se pueden seleccionar al lanzar el sistema:
+// Insertar imagen simulación cargada con Rviz y Gazebo solo
+  #figure(image("template/figures/Sim_base.png", width: 80%), caption: [Ilustración de la simulación en RViz y Gazebo del robot manipulador realizando una trayectoria. En la pantalla izquierda, se puede observar el brazo en sus posiciones inicial, actual y final. A su derecha, la representación de Gazebo mostrando esa posición actual junto al entorno simulado.]) 
+
+
+#pagebreak()
+
+El repositorio está diseñado para funcionar con dos modos, seleccionables en el lanzamiento del sistema:
 - Simulación: Utiliza Gazebo para crear un entorno virtual con el robot Braccio. Esto permite probar la lógica de control y la planificación de movimientos sin necesidad del hardware físico. Se activa con el argumento "sim:=true".
 - Hardware Real: Se comunica directamente con el robot Braccio a través de una conexión serie con una placa Arduino. El paquete _braccio_hardware_ gestiona esta comunicación, mediante el argumento "sim:=false". Adicionalmente incluye una opción para probar la comunicación con el hardware, mediante "hw_test:=true".
 
-// Insertar imagen simulación cargada con Rviz y Gazebo solo
+
 
 == Extensiones y mejoras implementadas
   El repositorio original ha sido modificado y ampliado para incluir las nuevas funcionalidades que permitan lograr los objetivos propuestos, mejorar la experiencia de usuario y mantener esa modularidad característica, reflejando ese trabajo en el siguiente repositorio @my_repo. 
@@ -233,18 +239,39 @@ Adicionalmente, se encuentra _braccio.ros2_control.xacro_, quién apunta a _brac
 
 /* Insertar imagen solo del robot en gazebo, probar con view_robot.launch.py y quizás estructura de carpeta braccio_description */
 
+#linebreak()
+
+#figure(
+  col2(
+    align(image("template/figures/Rob_frontal.png", width: 100%), center),
+    align(image("template/figures/Rob_lateral.png", width: 100%), center)
+  ),
+  caption: [Representación del robot Braccio Tinkerkit en Gazebo, mostrando dos perspectivas diferentes del manipulador.]
+)
+
 == Spawner de Cámara y cubos
   Para la simulación de tareas de percepción y manipulación, se han añadido varios elementos al entorno de Gazebo. El ejecutable encargado de esta acción es _vision_simulation.launch.py_, ubicado en la carpeta _launch_ del paquete _braccio_vision_. Este ejecutable lanza el mundo junto al robot y, pasado un tiempo, inicia el spawner de la cámara y los cubos.
 #linebreak()
 \
-   En primer lugar, se ha implementado un nodo que simula una cámara ubicada en el centro del mundo, proporcionando una vista cenital del entorno. Las físicas y plugins de ésta se encuentran definidas mediante _overhead_camera.urdf.xacro_, quien, junto a _camera_spawner.py_, se encarga de su inicialización en el mundo y de la publicación de los datos de la cámara en los tópicos correspondientes.
+   En primer lugar, se ha implementado un nodo que simula una cámara ubicada en el centro del mundo, a 0.6m de altura, proporcionando una vista cenital del entorno. Las físicas y plugins de ésta se encuentran definidas mediante _overhead_camera.urdf.xacro_, quien, junto a _camera_spawner.py_, se encarga de su inicialización en el mundo y de la publicación de los datos de la cámara en los tópicos correspondientes.
 
 #linebreak()
   Posteriormente, se han creado varios modelos de cubos de diferentes colores (rojo, verde y azul) y un tamaño de 3cm que actúan como objetos a manipular. Estos modelos están definidos mediante una plantilla SDF y se pueden instanciar en el mundo a través de _object_spawner.py_. Los cubos tienen propiedades físicas realistas, como masa y fricción, para asegurar una interacción coherente con el robot.
-/* Insertar imagen de la simulación al completo, junto a una vista cenital sin deteccion */
+
 
 #linebreak()
   Estos elementos permiten simular escenarios de pick‑and‑place donde el robot debe identificar, agarrar y mover los cubos a ubicaciones específicas dentro del entorno simulado.
+
+#linebreak()
+
+#figure(
+  col2(
+    align(image("template/figures/Vision_sim.png", width: 100%), right),
+    align(image("template/figures/Debug_cam.png", width: 110%), left)
+  ),
+  caption: [Representación completa del entorno de simulación, incluyendo el robot, los recipientes, la cámara y los objetos manipulables. A la derecha, la vista cenital de la cámara simulada 0.6m sobre el suelo, mostrando los cubos de diferentes colores.]
+)<fig-spawn>
+
 
 = Control mediante PS4 controller
   Mapeo de botones y joysticks a comandos de movimiento del robot. Implementación de nodos ROS 2 para teleoperación y control manual. Integración con MoveIt2 para planificación en tiempo real.
