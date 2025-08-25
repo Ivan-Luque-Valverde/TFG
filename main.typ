@@ -39,14 +39,15 @@
   #lorem(100)
   #pagebreak(to: "odd")
 
-  // Ejemplo de uso de Índices personalizados
+  /* Ejemplo de uso de Índices personalizados
   #index(title:[Índice reducido hasta nivel 2],target:(heading.where(level: 1).or(heading.where(level: 2))))
   #pagebreak(to: "odd")
 
   #index(title:[Índice reducido hasta nivel 3],target:(heading.where(level: 1).or(heading.where(level: 2)).or(heading.where(level: 3))))
   #pagebreak(to: "odd")
+*/
 
-  #index(title:[Índice sin reducir],target:(heading))
+  #index(title:[Índice],target:(heading))
   #pagebreak(to: "odd")
 ]
 #main-content[
@@ -172,24 +173,81 @@ Este enfoque, visualizado con la claridad de RViz2 y las herramientas de GUI que
 \
 No obstante, para el proyecto actual, se ha optado por la combinación de Gazebo, MoveIt2 y RViz2, dada su integración nativa y comodidad, dejando la puerta abierta a Foxglove para futuras iteraciones.
 
+/* Crear diagrama ROS2, Moveit y Gazebo */
 
 
+= Diseño del sistema
+  El sistema propuesto integra un robot manipulador Braccio Tinkerkit, controlado por una placa Arduino UNO, con un entorno de simulación en ROS 2 Humble. El flujo de datos y control se estructura en varios nodos ROS 2 que gestionan la percepción, planificación y ejecución de movimientos, tanto en simulación como en el robot físico.
+     
+== Repositorio ROS2 Braccio
+El repositorio base seleccionado para el desarrollo del sistema es el creado por el usuario jaMulet @repo, debido principalmente a su estructura modular y funcional para la simulación y control del Braccio Tinkerkit en ROS 2. 
+
+Está organizado en varios paquetes que gestionan diferentes aspectos del sistema, siendo éstos: 
++ Braccio_bringup: Paquete principal para lanzar los nodos necesarios para controlar el robot, tanto en simulación como en el hardware real.
+
++ Braccio_description: Contiene la descripción del robot en formato URDF, lo que permite su visualización y uso en herramientas como RViz.
+
++ Braccio_hardware: Define la interfaz de hardware para la comunicación con el robot real. Se basa en la comunicación serie USB para enviar mensajes a la plataforma Arduino y controlar el robot físico.
+
++ Braccio_moveit_config: Configuración para el uso de MoveIt2, mediante la implementación de los controladores del brazo y la pinza.
+
++ Braccio_ROS_Arduino: Contiene la biblioteca para implementar la interfaz de hardware del robot, basada en comunicación serial. Para el control de tareas se encuentra implementado un programador de éstas basado en la biblioteca TaskScheduler @task.
+
+#linebreak()
+
+El repositorio está diseñado para funcionar en dos modos, que se pueden seleccionar al lanzar el sistema:
+- Simulación: Utiliza Gazebo para crear un entorno virtual con el robot Braccio. Esto permite probar la lógica de control y la planificación de movimientos sin necesidad del hardware físico. Se activa con el argumento "sim:=true".
+- Hardware Real: Se comunica directamente con el robot Braccio a través de una conexión serie con una placa Arduino. El paquete _braccio_hardware_ gestiona esta comunicación, mediante el argumento "sim:=false". Adicionalmente incluye una opción para probar la comunicación con el hardware, mediante "hw_test:=true".
+
+// Insertar imagen simulación cargada con Rviz y Gazebo solo
+
+== Extensiones y mejoras implementadas
+  El repositorio original ha sido modificado y ampliado para incluir las nuevas funcionalidades que permitan lograr los objetivos propuestos, mejorar la experiencia de usuario y mantener esa modularidad característica, reflejando ese trabajo en el siguiente repositorio @my_repo. 
+
+  Se han añadido dos nuevos paquetes principales:
+
++ Braccio_gamepad_teleop: Permite el control del robot mediante un mando conectado mediante el puerto serie. Se ha implementado el mapeo de los botones y joysticks del mando a comandos específicos para mover las articulaciones del robot, tanto en simulación como en el hardware real, utilizando un mando de PlayStation 4 para las pruebas.
 
 
++ Braccio_vision: Incluye los nodos y scripts necesarios para tareas de visión por computadora y control. En éste se abordan aspectos como la detección de objetos, calibración de cámaras y aplicaciones de "pick and place".
+#linebreak()
+Estas implementaciones se tratarán en detalle en las siguientes secciones, explicando su diseño, integración con el sistema y los beneficios que aportan al proyecto global.
 
 
-  = Diseño del sistema
-     == Repositorio ROS2 referencia
-  Estructura del repositorio, principales nodos y paquetes, y su relación con el hardware y la simulación. Ejemplos de uso y pruebas.
+= Entorno de simulación
 
-    == Modelado del robot: URDF/SDF y recursos
-  Cómo describir un manipulador en URDF/SDF: articulaciones, eslabones, masas/inercia y meshes. Buenas prácticas: simplificar colisiones, documentar parámetros dinámicos y mantener congruencia entre modelo visual y de colisión.
+== Creación del mundo
+El entorno donde el robot opera se define en el archivo _braccio.world_, ubicado en la carpeta _gazebo_ de _braccio_description_. Este archivo actúa como el escenario virtual en el que el robot Braccio interactúa con otros objetos y el entorno. Su función es establecer todo lo que existe en el mundo antes de que el manipulador aparezca.
 
-    == Simulación física y fidelidad
-  Motores físicos comunes (ODE, Bullet, DART, Chrono) y su tratamiento de contactos, fricción y servos. Impacto de la fidelidad en planificación y en la transferencia sim‑to‑real; necesidad de identificación de parámetros dinámicos para validar la simulación.
+En el siguiente se especifican varios elementos clave:
+- Define la gravedad del mundo, estableciendo el terreno y la luminosidad del mismo a través de un modelo de sol. 
+- Incluye dos modelos estáticos de forma hexagonal de colores verde y azul, como superficies para el depósito de los objetos.
+- Registra los plugins _gazebo_ros_state_ y _gazebo_link_attacher_,  necesarios para la obtención de la posición de cada objeto en tiempo real y para la simulación del agarre de los objetos, respectivamente.
 
-  == Spawner de objetos
+== Robot manipulador 
 
+El robot manipulador Braccio se describe principalmente en la carpeta _braccio_description_ comentada previamente. En el interior de la misma se encuentra una carpeta llamada _urdf_, que contiene el archivo _braccio.urdf.xacro_, entre otros. Éste es el archivo de configuración principal y se nutre del resto de archivos, donde se definen las diferentes partes del robot, como los enlaces y las articulaciones, así como sus propiedades físicas y visuales. 
+\
+\
+Adicionalmente, se encuentra _braccio.ros2_control.xacro_, quién apunta a _braccio_controllers.yml_, donde se especifican los controladores PID para cada articulación del robot, así como la configuración de los actuadores y sensores. 
+
+/* Insertar imagen solo del robot en gazebo, probar con view_robot.launch.py y quizás estructura de carpeta braccio_description */
+
+== Spawner de Cámara y cubos
+  Para la simulación de tareas de percepción y manipulación, se han añadido varios elementos al entorno de Gazebo. El ejecutable encargado de esta acción es _vision_simulation.launch.py_, ubicado en la carpeta _launch_ del paquete _braccio_vision_. Este ejecutable lanza el mundo junto al robot y, pasado un tiempo, inicia el spawner de la cámara y los cubos.
+#linebreak()
+\
+   En primer lugar, se ha implementado un nodo que simula una cámara ubicada en el centro del mundo, proporcionando una vista cenital del entorno. Las físicas y plugins de ésta se encuentran definidas mediante _overhead_camera.urdf.xacro_, quien, junto a _camera_spawner.py_, se encarga de su inicialización en el mundo y de la publicación de los datos de la cámara en los tópicos correspondientes.
+
+#linebreak()
+  Posteriormente, se han creado varios modelos de cubos de diferentes colores (rojo, verde y azul) y un tamaño de 3cm que actúan como objetos a manipular. Estos modelos están definidos mediante una plantilla SDF y se pueden instanciar en el mundo a través de _object_spawner.py_. Los cubos tienen propiedades físicas realistas, como masa y fricción, para asegurar una interacción coherente con el robot.
+/* Insertar imagen de la simulación al completo, junto a una vista cenital sin deteccion */
+
+#linebreak()
+  Estos elementos permiten simular escenarios de pick‑and‑place donde el robot debe identificar, agarrar y mover los cubos a ubicaciones específicas dentro del entorno simulado.
+
+= Control mediante PS4 controller
+  Mapeo de botones y joysticks a comandos de movimiento del robot. Implementación de nodos ROS 2 para teleoperación y control manual. Integración con MoveIt2 para planificación en tiempo real.
 
 
 = Percepción y localización de objetivos
@@ -205,9 +263,6 @@ No obstante, para el proyecto actual, se ha optado por la combinación de Gazebo
   == Cinemática directa e inversa
   == Repositorio atach/detach
 
-= Control mediante PS4 controller
-= Integración hardware–software y control
-  Conexión Arduino ↔ ROS 2: rosserial, micro‑ROS, drivers custom; uso de ros2_control y controladores en tiempo real. Retos: latencias, interpolación de servos hobby, límites de torque y seguridad en lazo cerrado.
 
   == Transferencia sim‑to‑real y validación experimental
   Técnicas para reducir la brecha: domain randomization, calibración de cámara y brazo, system identification y HIL. Diseño experimental para comparar simulación y prototipo real, incluyendo métricas y repetibilidad.
@@ -239,7 +294,6 @@ No obstante, para el proyecto actual, se ha optado por la combinación de Gazebo
 
 
   
-  #lorem(50)
   #figure(image("template/figures/Logo.svg",width: 16%),caption:"Imagen de prueba")
 
   #pagebreak(to: "odd")
@@ -258,7 +312,7 @@ No obstante, para el proyecto actual, se ha optado por la combinación de Gazebo
   // bibliografía, índice de figuras...
   = Bibliografía
   #bibliography("referencias.bib")
-  //#pagebreak(to: "odd")
+  #pagebreak(to: "odd")
   // Recordar usar la función bibliography para la bibliografía.
   // Para mantener la lista de referencias se puede usar software como Mendeley.
   // #bibliography("referencias.bib")
