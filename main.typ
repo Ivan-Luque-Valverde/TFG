@@ -298,7 +298,8 @@ Para la realización de este sistema de teleoperación se ha optado por una filo
 \
 + Los joysticks no controlan el movimiento de la pinza en un eje XYZ, sino que controlan directamente la velocidad de rotación de las articulaciones individuales del robot. En @joystick, se explica la diferencia entre utilizar este control directo (JointJog), frente al uso de un sistema basado en la cinemática inversa (TwistStamped).
 
-+ El nodo mantiene una variable interna, _self.current_joint_positions_, que almacena la posición objetivo actual de cada articulación. De este modo, cada vez que se mueve el joystick, el nodo no establece una posición fija, sino que añade o resta un pequeño incremento a la posición actual, permitiendo un movimiento del robot mucho más fluido y suave.
++ El nodo mantiene una variable interna, _self.current_joint_positions_, que almacena la posición objetivo actual de cada articulación. De este modo, cada vez que se mueve el joystick, el nodo no establece una posición fija, sino que añade o resta un pequeño incremento a la posición actual, permitiendo un movimiento del robot mucho más fluido y suave. En la @fig-base se muestra dicho incremento de una forma mucho más clara.
+
 \
 De este modo, la arquitectura del sistema es muy sencilla, teniendo un único nodo encargado de:
 + Recibir los datos crudos del gamepad.
@@ -307,6 +308,12 @@ De este modo, la arquitectura del sistema es muy sencilla, teniendo un único no
 + Calcular los nuevos comandos de posición para cada articulación.
 + Gestionar la lógica de "pick and place" interactuando con los servicios de Gazebo.
 + Publicar los comandos directamente a los controladores del robot.
+\
+#figure(
+    align(image("template/figures/incremento_base.png", width: 100%), center),
+  caption: [Lectura del terminal de Ubuntu. Representa el incremento en la posición de la articulación base al mantener el joystick inclinado hacia la izquierda durante unos segundos, siendo LX el valor del joystick izquierdo y el primer término de POS, la posición angular de la base del robot en radianes. El resto de valores nulos corresponden al estado de los botones que no se han pulsado.]
+)<fig-base>
+
 
 == Mapeo de botones y joysticks
 El control de las acciones del robot se realiza mediante un mapeo de los botones y joysticks del mando de PS4 a los comandos de movimiento del robot, tal como se puede observar en la @fig-mapeo.
@@ -326,7 +333,7 @@ A esta configuración se incluye un deadzone para evitar movimientos no deseados
 La cantidad de botones en el mando es ampliamente superior, decidiendo destinar los gatillos para el control de la pinza y articulación restante, y los botones frontales para acciones específicas de "pick and place":
 - Gatillos L1 y R1: incrementan y decrementan Joint_4 (muñeca).
 - Gatillos L2 y R2: abren y cierran Gripper_Joint (pinza).
-- Círculo: realiza la acción de "pick", intentando agarrar el objeto más cercano.
+- Triángulo: realiza la acción de "pick", intentando agarrar el objeto más cercano.
 - Cruz: realiza la acción de "place", intentando soltar el objeto agarrado.
  \ \
 Asimismo, se ha configurado una variable global, llamada _velocity_factor_, que permite ajustar la velocidad de movimiento del robot, afectando a la suavidad y sensibilidad de los movimientos.
@@ -345,16 +352,18 @@ Tal como se ha comentado previamente, esta implementación prioriza la sencillez
   - Conecta con los servicios de Gazebo para la lógica de "pick and place", llamando a los servicios de _attach_ y _detach_ del plugin _gazebo_link_attacher_. Éstos:
     - Detectan el objeto más cercano utilizando la información de los sensores y la posición del gripper.
     - Comprueban que la distancia entre el gripper y el objeto es adecuada, inferior a 15 cm.
-    - Si ambas condiciones se cumplen, envía la petición de _attach/detach_ al servicio correspondiente.
-+ El sistema _ros2_control_ recibe estas trayectorias y las ejecuta en el robot.
-
-/* Insertar imagen funcionamiento en Gazebo o real life, con terminal y sim */
-/* Insertar referencias de paginas sobre gamepad */
-
+    - Si ambas condiciones se cumplen, envía la petición de _attach/detach_ al servicio correspondiente, mostrado en la @fig-atach
++ El sistema _ros2_control_ recibe estas trayectorias y las ejecuta en el robot simulado o real.
 #linebreak()
 Este control proporciona una vía rápida y segura para validar la arquitectura de control, probar el mapeo de ejes y calibrar parámetros como el velocity_factor antes de automatizar. 
 Es una herramienta útil para detectar límites de articulación, comprobar la comunicación con Gazebo/ros2_control y afinar la experiencia de teleoperación, previa a la implementación 
 de un sistema de control basado en visión del manipulador real.
+\
+\
+#figure(
+  align(image("template/figures/atach.png", width: 100%), center),
+  caption: [Servicio de Gazebo para el pick and place de objetos mediante el plugin gazebo_link_attacher. En la imagen se observa la petición de attach al servicio, el cálculo de las distancias respecto la posición del gripper y los cubos; y tras la verificación del umbral de cercanía, la ejecución de la acción entre la pinza y el blue_cube1.]
+) <fig-atach>
 
 
 = Percepción y localización de objetivos
