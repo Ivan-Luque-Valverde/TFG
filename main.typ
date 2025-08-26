@@ -288,7 +288,73 @@ Adicionalmente, se encuentra _braccio.ros2_control.xacro_, quién apunta a _brac
 
 
 = Control mediante PS4 controller
-  Mapeo de botones y joysticks a comandos de movimiento del robot. Implementación de nodos ROS 2 para teleoperación y control manual. Integración con MoveIt2 para planificación en tiempo real.
+El sistema actual propone la implementación de un sistema de control basado en la retroalimentación visual, utilizando la cámara simulada para ajustar dinámicamente los comandos de movimiento del robot.
+Sin embargo, previa a ésta, se ha optado por un sistema de control manual mediante un mando de PS4, con el objetivo de familiarizarse con el entorno y realizar las pruebas pertinentes que verifiquen el correcto funcionamiento del mismo. 
+En la carpeta _braccio_gamepad_teleop_ se encuentra el nodo principal encargado de esta tarea, _gamepad_teleop.py_, y un launch que arranca el sistema.
+
+ == Arquitectura y filosofía de control
+Para la realización de este sistema de teleoperación se ha optado por una filosofía basada en el control incremental directo en el espacio de articulación. Este sistema implica dos acciones fundamentales:
+\
+\
++ Los joysticks no controlan el movimiento de la pinza en un eje XYZ, sino que controlan directamente la velocidad de rotación de las articulaciones individuales del robot. En @joystick, se explica la diferencia entre utilizar este control directo (JointJog), frente al uso de un sistema basado en la cinemática inversa (TwistStamped).
+
++ El nodo mantiene una variable interna, _self.current_joint_positions_, que almacena la posición objetivo actual de cada articulación. De este modo, cada vez que se mueve el joystick, el nodo no establece una posición fija, sino que añade o resta un pequeño incremento a la posición actual, permitiendo un movimiento del robot mucho más fluido y suave.
+\
+De este modo, la arquitectura del sistema es muy sencilla, teniendo un único nodo encargado de:
++ Recibir los datos crudos del gamepad.
++ Interpretar los movimientos de los joysticks y los botones.
++ Mantener un registro del estado de las articulaciones del robot.
++ Calcular los nuevos comandos de posición para cada articulación.
++ Gestionar la lógica de "pick and place" interactuando con los servicios de Gazebo.
++ Publicar los comandos directamente a los controladores del robot.
+
+== Mapeo de botones y joysticks
+El control de las acciones del robot se realiza mediante un mapeo de los botones y joysticks del mando de PS4 a los comandos de movimiento del robot, tal como se puede observar en la @fig-mapeo.
+
+=== Joysticks
+Se encuentran habitualmente dos joysticks en el mando, el stick izquierdo y el derecho, cada uno con los ejes horizontal y vertical.
+ La asignación de los ejes a las articulaciones del robot es la siguiente:
+- Stick izquierdo:
+  - Eje X: Joint_base (base)
+  - Eje Y: Joint_1 (hombro)
+- Stick derecho:
+  - Eje X: Joint_3 (antebrazo)
+  - Eje Y: Joint_2 (codo)
+
+A esta configuración se incluye un deadzone para evitar movimientos no deseados por pequeñas variaciones en la posición de los joysticks.
+=== Botones 
+La cantidad de botones en el mando es ampliamente superior, decidiendo destinar los gatillos para el control de la pinza y articulación restante, y los botones frontales para acciones específicas de "pick and place":
+- Gatillos L1 y R1: incrementan y decrementan Joint_4 (muñeca).
+- Gatillos L2 y R2: abren y cierran Gripper_Joint (pinza).
+- Círculo: realiza la acción de "pick", intentando agarrar el objeto más cercano.
+- Cruz: realiza la acción de "place", intentando soltar el objeto agarrado.
+ \ \
+Asimismo, se ha configurado una variable global, llamada _velocity_factor_, que permite ajustar la velocidad de movimiento del robot, afectando a la suavidad y sensibilidad de los movimientos.
+
+#figure(
+  align(image("template/figures/mando.png", width: 100%), center),
+  caption: [Diagrama del mando de PS4 con el mapeo de los botones y joysticks a las articulaciones y acciones del robot mencionadas previamente.]
+) <fig-mapeo>
+
+== Flujo de datos y control
+Tal como se ha comentado previamente, esta implementación prioriza la sencillez y respuesta inmediata. De este modo, a continuación se detalla el flujo de datos con el fin de comprender adecuadamente su funcionamiento: 
++ El launch arranca el nodo _joy_node_ @joy_linux, encargado de la publicación de datos en crudo del gamepad en _/joy_ y _gamepad_teleop.py_ se suscribe a este tópico.
++ El nodo principal:
+  - Recibe los datos del gamepad a través del tópico, la lista de modelos en simulación de _/gazebo/model_states_ y obtiene de las TF la posición del gripper para calcular posteriormente su proximidad a los objetos.
+  - Calcula y publica los comandos para los 5 joints del brazo y el gripper en los tópicos correspondientes. Sin embargo, previo a ello, verifica que ninguna de las posiciones objetivo calculadas exceda los límites definidos para cada articulación.
+  - Conecta con los servicios de Gazebo para la lógica de "pick and place", llamando a los servicios de _attach_ y _detach_ del plugin _gazebo_link_attacher_. Éstos:
+    - Detectan el objeto más cercano utilizando la información de los sensores y la posición del gripper.
+    - Comprueban que la distancia entre el gripper y el objeto es adecuada, inferior a 15 cm.
+    - Si ambas condiciones se cumplen, envía la petición de _attach/detach_ al servicio correspondiente.
++ El sistema _ros2_control_ recibe estas trayectorias y las ejecuta en el robot.
+
+/* Insertar imagen funcionamiento en Gazebo o real life, con terminal y sim */
+/* Insertar referencias de paginas sobre gamepad */
+
+#linebreak()
+Este control proporciona una vía rápida y segura para validar la arquitectura de control, probar el mapeo de ejes y calibrar parámetros como el velocity_factor antes de automatizar. 
+Es una herramienta útil para detectar límites de articulación, comprobar la comunicación con Gazebo/ros2_control y afinar la experiencia de teleoperación, previa a la implementación 
+de un sistema de control basado en visión del manipulador real.
 
 
 = Percepción y localización de objetivos
