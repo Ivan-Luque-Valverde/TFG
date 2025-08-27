@@ -399,9 +399,16 @@ El sistema de percepción sigue el flujo modular mostrado en la @fig-flujo donde
   De los cuales se obtienen algunos valores como las distancias focales: fx=381.96 y fy=381.96 o el centro de la cámara cx=320 y cy=240.
 
 #linebreak()
-  La cámara simulada, por su parte, publica imágenes en el tópico _/overhead_camera/image_raw_ e información de la misma en _/overhead_camera/camera_info_. Estas imágenes son consumidas por el nodo de detección de objetos para su procesamiento y por el subsistema de visualización _camera_viewer.py_. Esta última permite la visualización de la imagen en tiempo real y la imagen procesada con la información de los objetos detectados, mostrado en la figura....
+  La cámara simulada, por su parte, publica imágenes en el tópico _/overhead_camera/image_raw_ e información de la misma en _/overhead_camera/camera_info_. Estas imágenes son consumidas por el nodo de detección de objetos para su procesamiento y por el subsistema de visualización _camera_viewer.py_. Esta última permite la visualización de la imagen en tiempo real y la imagen procesada con la información de los objetos detectados, mostrado en la @fig-cam.
 
-  /* Insertar imagen de las dos cámaras */
+#linebreak()
+  #figure(
+  col2(
+    align(image("template/figures/Cam_principal.png", width: 100%), left),
+    align(image("template/figures/Cam_debug.png", width: 98%), right)
+  ),
+  caption: [Representación de las cámaras simuladas, mostrando la vista del sensor raw y la vista de depuración tras la detección de los objetos. En esta última, se puede observar el marcador de cada objeto detectado junto con las coordenadas de su centro en sus respectivos colores.]
+)<fig-cam>
 
 == Detección de objetos
 El subsistema de detección de objetos tiene por objetivo localizar los cubos presentes en el área de trabajo y publicar su posición en un formato utilizable por el resto de la cadena de control y por las herramientas de visualización empleadas en el proyecto.
@@ -413,8 +420,8 @@ El subsistema de detección de objetos tiene por objetivo localizar los cubos pr
 #linebreak()
 #figure(col2(block(
   stack(
-    dir: ttb, // Dirección top-to-bottom (de arriba a abajo)
-    spacing: 1.5em, // Espacio entre las ecuaciones
+    dir: ttb,
+    spacing: 1.5em, 
     math.equation(block: true, $  X_norm = ("pixel"_x - "c"_x)/ "f"_x  #h(1.5cm)   Y_norm = ("pixel"_y - "c"_y) / "f"_y $),
     math.equation(block: true, $ X_"world" = X_norm dot.op "Z" #h(1.5cm)  Y_"world" = Y_norm dot.op "Z" $), )),
     align(image("template/figures/UV_XY.png", width: 50%), top)),
@@ -430,25 +437,43 @@ El subsistema de detección de objetos tiene por objetivo localizar los cubos pr
 #linebreak()
   Esta información proporcionada permite al usuario depurar discrepancias entre el simulador y el hardware, y actuar como enlace entre la detección de objetos y los subsistemas de planificación y ejecución MoveIt2 o teleop. Por otra parte, mantener una separación clara entre canales de diagnóstico (debug_image, markers) y canales de decisión (detected_object_coords) reduce el acoplamiento entre componentes y facilita las pruebas.
 
-// Insertar imagen de la detección de objetos de object detecter.py (cmd) y referenciar la figura anterior con los marcadores.
+#linebreak()
+  #figure(align(image("template/figures/Object_detector.png", width: 100%), center), caption: [Lectura del terminal de Ubuntu tras la ejecución de _object_detector.py_. Representa la cantidad de objetos detectados, clasificados por su color, junto a sus coordenadas en píxeles, coincidentes con los datos de la @fig-cam. 
+  Los cubos temporalmente bloqueados son aquellos destinados a la manipulación en el entorno simulado, estudiados en secciones posteriores.])
 
   == Matriz de Homografía
 
   La matriz de homografía se utiliza para mapear puntos de la imagen a coordenadas del mundo, teniendo en cuenta la perspectiva de la cámara. Bien es cierto que tiene infinidad de usos y, al tratarse de una cámara cenital, su relevancia es menor pues se trabaja en un escenario 2D ideal, sin distorsión. No obstante, para este proyecto y, de cara a la implementación real, es importante contar con esta matriz en términos de precisión.
 
 #linebreak()
-  El cálculo de esta matriz es bastante sencillo. Para ello, se han colocado 4 cubos rojos en posiciones conocidas dentro del entorno simulado. Mediante el script de detección de objetos anterior se han detectado éstos y calculado sus centroides en píxeles. Combinando esta posición en píxeles con su ubicación en el mundo real, se ha aplicado la función `cv2.findHomography` con el fin de la obtención de esta matriz. 
+  El cálculo de esta matriz es bastante sencillo. Para ello, se han colocado 4 cubos rojos en posiciones conocidas dentro del entorno simulado (metros): 
+
+  - corner1: (-0.35, -0.25)
+  - corner2: (-0.35, 0.25)
+  - corner3: (0.35, 0.25)
+  - corner4: (0.35, -0.25)
+
+Mediante el script de detección de objetos anterior se han detectado éstos y calculado sus centroides en píxeles, tal como se muestra en la @fig-cam, obteniendo las posiciones (píxeles):
+  
+  - corner1: (202,75)
+  - corner2: (436,75)
+  - corner3: (436,403)
+  - corner4: (202,403)
 
 #linebreak()
-  La matriz obtenida se puede visualizar en la figura ... y se almacena en _camera_calibration.json_ para su uso posterior en la conversión de coordenadas de la cinemática inversa.
+  Combinando esta posición en píxeles con su ubicación en el mundo real, se ha aplicado la función `cv2.findHomography` con el fin de la obtención de esta matriz. 
 
-  /* Insertar imagen matriz de homografía (cmd) */
+#linebreak()
+  La matriz obtenida se puede visualizar en la @fig-Homografia y se almacena en _camera_calibration.json_ para su uso posterior en la conversión de coordenadas de la cinemática inversa.
 
   #linebreak()
-  Finalmente, se ha probado dicha matriz mediante un script de validación que compara las posiciones conocidas de los cubos con las posiciones calculadas a partir de sus centroides en píxeles, así como con posiciones interiores a ese área definida. Los resultados muestran un error medio inferior a 1 cm, lo cual es aceptable para las tareas de pick‑and‑place previstas.
+  #figure(align(image("template/figures/Hom.png", width: 100%), center), caption: [Lectura del terminal de Ubuntu tras la ejecución de _Calculate_homography.py_. Representa la matriz de homografía calculada .])<fig-Homografia>
 
-/* Insertar imagen test_homography (cmd) */
 
+  #linebreak()
+  Finalmente, se ha probado dicha matriz mediante un script de validación que compara las posiciones conocidas de los cubos con las posiciones calculadas a partir de sus centroides en píxeles, así como con posiciones interiores a ese área definida. Los resultados muestran un error prácticamente insignificante, lo cual es perfecto para las tareas de pick‑and‑place previstas.
+
+#figure(align(image("template/figures/Test_hom.png", width: 100%), center), caption: [Lectura del terminal de Ubuntu tras la ejecución de _test_homography.py_. Representa los resultados de la validación de la matriz de homografía donde el error en la reproyección es muy bajo. Al comparar la posición real de un cubo adicional (0.35, 0.05) con la posición estimada mediante la matriz (0.3497, 0.04864) se observa un error de 1.38 mm, ámpliamente asumible para un robot manipulador.])
 
 
 
