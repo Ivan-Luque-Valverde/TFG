@@ -1,5 +1,6 @@
 #import "template/lib.typ": tfg_etsi_us_template, pre-content, main-content, post-content, index,first-letter
 #let col2 = grid.with(columns: (0.5fr, 0.5fr), gutter: 5pt)
+
 #set text(font: ("Times New Roman"))
 
 #show: tfg_etsi_us_template.with(
@@ -263,7 +264,7 @@ Adicionalmente, se encuentra _braccio.ros2_control.xacro_, quién apunta a _brac
   caption: [Representación del robot Braccio Tinkerkit en Gazebo, mostrando dos perspectivas diferentes del manipulador.]
 )
 
-== Spawner de Cámara y Cubos
+== Spawner de Cámara y Cubos <camera-spawn>
   Para la simulación de tareas de percepción y manipulación, se han añadido varios elementos al entorno de Gazebo. El ejecutable encargado de esta acción es _vision_simulation.launch.py_, ubicado en la carpeta _launch_ del paquete _braccio_vision_. Este ejecutable lanza el mundo junto al robot y, pasado un tiempo, inicia el spawner de la cámara y los cubos.
 #linebreak()
 \
@@ -367,12 +368,91 @@ de un sistema de control basado en visión del manipulador real.
 
 
 = Percepción y localización de objetivos
-  Sensores habituales: cámaras RGB, RGB‑D y marcadores fiduciales. Técnicas: detección y segmentación de objetos (OpenCV, redes CNN), estimación de pose 6‑DoF, uso de PCL para nubes de puntos. Conjuntos de datos y benchmarks (YCB, etc.).
-  == Detección de objetos
+La percepción y detección de objetos es un componente elemental en el sistema de pick‑and‑place, ya que proporciona la información necesaria para que el robot identifique y localice los objetos a manipular sin necesidad de intervención humana directa, de forma automática. Ante ello, se ha investigado la metodología empleada por Will Stedden en su proyecto @chef, basado en un flujo de trabajo modular y reproducible. Sin embargo, debido al enfoque de calibración manual, se ha optado por la implementación de un sistema de calibración automática basado en homografía, similar al explicado por Nathan Naerts @aruco, donde se han utilizado arucos para delimitar el espacio de trabajo y la conversión de coordenadas. Sin embargo, en este caso, se ha optado por sustituir sus arucos por cubos rojos referenciales.
 
-  == Matriz de transformación y calibración
+//#figure(align(image("template/figures/aruco.png", width: 70%), center), caption: [Imagen obtenida del vídeo explicativo de Nathan Naerts, donde implementa un sistema de calibración automática basada homografía utilizando arucos para delimitar el espacio de trabajo y la conversión de coordenadas. En él se observa el manipualdor, situado en una mesa de trabajo, agarrando un objeto situado en el interior del recinto; reconocido por el sistema de visión de la imagen inferior derecha @aruco.]) <fig-aruco>
 
-  == Matriz de homografía
+#linebreak()
+El sistema de percepción sigue el flujo modular mostrado en la @fig-flujo donde se facilita la validación en simulación y la transferencia al robot real. Todos estos archivos se encuentran en la carpeta _braccio_vision_.
+
+- Los parámetros intrínsecos del sensor de la cámara, así como la configuración de los umbrales de detección se almacenan en  _vision_config.yaml_.
+- El sensor de la cámara publica las imágenes, pudiendo visualizar la imagen desde _camera_viewer.py_.
+- El detector de objetos procesa las imágenes detectando contornos por color y calculando centroides en píxeles. Luego, publica la información en la imagen debug para su visualización y en un tópico con las coordenadas de los objetos detectados.
+- Mediante la posición de los objetos detectados en píxeles y los objetos de referencia en metros, se realiza el cálculo de la matriz de homografía, que se almacena en _camera_calibration.json_.
+- Esta matriz se utiliza para convertir las coordenadas de píxeles a coordenadas del mundo real de aquellos nuevos objetos que el sistema desconoce su posición.
+
+#linebreak()
+#figure(align(image("template/figures/Percepcion.png", width: 80%), center), caption: [Esquema del flujo de percepción y detección de objetos para el sistema de pick-and-place.]) <fig-flujo>
+
+  
+  == Sensor de la cámara
+  El sensor de la cámara se configura para simular una cámara RGB convencional, con parámetros ajustables como resolución, campo de visión (FOV), tasa de frames y posición fija en el entorno. Tal como se describió en la @camera-spawn, la configuración principal se realiza en _overhead_camera.urdf.xacro_ mediante _camera_spawner.py_. 
+  
+  #linebreak()
+  Esta configuración se complementa con _vision_config.yaml_, donde se definen los siguientes parámetros clave del sensor: 
+
+  - Resolución: 640x480 px.
+  - FOV: 80º.
+  - Tasa de frames: 30 FPS.
+  - Posición: fija en el entorno.
+  - Altura: 0.6 metros.
+  De los cuales se obtienen algunos valores como las distancias focales: fx=381.96 y fy=381.96 o el centro de la cámara cx=320 y cy=240.
+
+#linebreak()
+  La cámara simulada, por su parte, publica imágenes en el tópico _/overhead_camera/image_raw_ e información de la misma en _/overhead_camera/camera_info_. Estas imágenes son consumidas por el nodo de detección de objetos para su procesamiento y por el subsistema de visualización _camera_viewer.py_. Esta última permite la visualización de la imagen en tiempo real y la imagen procesada con la información de los objetos detectados, mostrado en la figura....
+
+  /* Insertar imagen de las dos cámaras */
+
+== Detección de objetos
+El subsistema de detección de objetos tiene por objetivo localizar los cubos presentes en el área de trabajo y publicar su posición en un formato utilizable por el resto de la cadena de control y por las herramientas de visualización empleadas en el proyecto.
+\ El sistema recibe información de la cámara simulada y de su configuración, así como los umbrales HSV y parámetros de filtrado de área definidos en _vision_config.yaml_. El procesamiento de las imágenes sigue un flujo clásico de visión por computadora basado en OpenCV, que incluye:
+- Conversión BGR → HSV y aplicación de rangos colorimétricos definidos en el archivo de configuración mencionado, detectando así los cubos rojos, verdes y azules.
+- Operaciones morfológicas y filtrado por área para eliminar ruido y detecciones espurias.
+- Detección de contornos y cálculo del centroide en píxeles (cx, cy) para cada objeto relevante.
+- Conversión píxel → mundo mediante la función `pixel_to_world`. Esta conversión se apoya en un modelo geométrico simple, @fig-pixel, pudiendo ser sustituido posteriormente por la homografía calibrada almacenada en _camera_calibration.json_ para aumentar la precisión.
+#linebreak()
+#figure(col2(block(
+  stack(
+    dir: ttb, // Dirección top-to-bottom (de arriba a abajo)
+    spacing: 1.5em, // Espacio entre las ecuaciones
+    math.equation(block: true, $  X_norm = ("pixel"_x - "c"_x)/ "f"_x  #h(1.5cm)   Y_norm = ("pixel"_y - "c"_y) / "f"_y $),
+    math.equation(block: true, $ X_"world" = X_norm dot.op "Z" #h(1.5cm)  Y_"world" = Y_norm dot.op "Z" $), )),
+    align(image("template/figures/UV_XY.png", width: 50%), top)),
+  caption: [Ecuaciones para el cálculo de las coordenadas normalizadas y su proyección al plano, basadas en el modelo geométrico mostrado en la derecha @pixel_world. Los parámetros utilizados se corresponden con la posición del objeto en píxeles (pixel#sub[x], pixel#sub[y]), el centro de la cámara (c#sub[x], c#sub[y]), las distancias focales (f#sub[x], f#sub[y]) y la altura de la cámara (Z).],
+  kind: image, )<fig-pixel> 
+
+#linebreak()
+  Tras esto, el nodo publica la siguiente información:
+  - _/vision/debug_image_: imagen anotada con máscaras y centroides, destinada a diagnóstico y visualización.
+  - _/vision/object_markers_: marcadores para representación en RViz.
+  - _/detected_object_coords_: coordenadas en el sistema de referencia del mundo para cada detección.
+
+#linebreak()
+  Esta información proporcionada permite al usuario depurar discrepancias entre el simulador y el hardware, y actuar como enlace entre la detección de objetos y los subsistemas de planificación y ejecución MoveIt2 o teleop. Por otra parte, mantener una separación clara entre canales de diagnóstico (debug_image, markers) y canales de decisión (detected_object_coords) reduce el acoplamiento entre componentes y facilita las pruebas.
+
+// Insertar imagen de la detección de objetos de object detecter.py (cmd) y referenciar la figura anterior con los marcadores.
+
+  == Matriz de Homografía
+
+  La matriz de homografía se utiliza para mapear puntos de la imagen a coordenadas del mundo, teniendo en cuenta la perspectiva de la cámara. Bien es cierto que tiene infinidad de usos y, al tratarse de una cámara cenital, su relevancia es menor pues se trabaja en un escenario 2D ideal, sin distorsión. No obstante, para este proyecto y, de cara a la implementación real, es importante contar con esta matriz en términos de precisión.
+
+#linebreak()
+  El cálculo de esta matriz es bastante sencillo. Para ello, se han colocado 4 cubos rojos en posiciones conocidas dentro del entorno simulado. Mediante el script de detección de objetos anterior se han detectado éstos y calculado sus centroides en píxeles. Combinando esta posición en píxeles con su ubicación en el mundo real, se ha aplicado la función `cv2.findHomography` con el fin de la obtención de esta matriz. 
+
+#linebreak()
+  La matriz obtenida se puede visualizar en la figura ... y se almacena en _camera_calibration.json_ para su uso posterior en la conversión de coordenadas de la cinemática inversa.
+
+  /* Insertar imagen matriz de homografía (cmd) */
+
+  #linebreak()
+  Finalmente, se ha probado dicha matriz mediante un script de validación que compara las posiciones conocidas de los cubos con las posiciones calculadas a partir de sus centroides en píxeles, así como con posiciones interiores a ese área definida. Los resultados muestran un error medio inferior a 1 cm, lo cual es aceptable para las tareas de pick‑and‑place previstas.
+
+/* Insertar imagen test_homography (cmd) */
+
+
+
+
+
 
 = Planificación de agarre y manipulación
   Algoritmos y herramientas: OMPL, MoveIt2 para planificación de trayectorias; GraspIt!, Dex‑Net y enfoques basados en aprendizaje para planificación de agarres. Métricas de calidad del agarre y problemas prácticos (contactos, incertidumbre en fricción).
