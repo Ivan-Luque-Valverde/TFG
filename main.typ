@@ -1,6 +1,6 @@
 #import "template/lib.typ": tfg_etsi_us_template, pre-content, main-content, post-content, index,first-letter
 #let col2 = grid.with(columns: (0.5fr, 0.5fr), gutter: 5pt)
-
+#let col3 = grid.with(columns: (0.5fr, 0.5fr, 0.5fr), gutter: 5pt)
 #set text(font: ("Times New Roman"))
 
 #show: tfg_etsi_us_template.with(
@@ -103,14 +103,135 @@ De forma complementaria, se pretende establecer un flujo de trabajo que integre 
 Para ello, en primer lugar, se ha seleccionado un repositorio existente en GitHub como base inicial y funcional para el desarrollo del sistema @repo. A continuación, se ha modelado hacia el objetivo deseado, adaptando y ampliando las funcionalidades del repositorio original con nuevas características referenciadas en otros repositorios. Finalmente, se ha implementado y probado el sistema tanto en simulación como en el robot físico, evaluando su rendimiento y realizando ajustes según sea necesario.
 = Estado del arte
 
-  == Introducción
-  Breve contexto sobre la importancia de las tareas pick‑and‑place en robótica, tanto en entornos industriales como educativos. Se define el alcance: simulación y validación de un Braccio Tinkerkit controlado desde Arduino y ROS 2, con foco en percepción, planificación y transferencia sim‑to‑real.
+  == Introducción a la robótica
+  
+  La robótica se define como la técnica que aplica la informática al diseño y empleo de aparatos que, en sustitución de personas, realizan operaciones o trabajos, por lo general en instalaciones industriales (RAE).
 
-  == Robótica manipuladora y aplicaciones pick and place
-  Tipos de manipuladores (seriales, paralelos), grados de libertad habituales y requisitos clave: precisión, repetibilidad, carga útil y velocidad. Revisión de aplicaciones: automatización industrial, logística ligera, ensamblaje y uso en docencia e investigación.
+  #linebreak()
+  El término “robot” fue acuñado por el escritor checo Karel Čapek en su obra de teatro “Rossum’s Universal Robots” en 1921 en el Teatro Nacional de Praga, en la cual se creaban humanos sintéticos para aligerar la carga de trabajo de los humanos.
+  Cabe destacar que este término fue realmente ideado por el hermano del autor, el cual se basó en la palabra checa _robota_, que significa trabajo, en general, de la servidumbre @checa.
 
-  == Braccio Tinkerkit, solución educativa
-  Descripción técnica breve (arquitectura, servos, rango de movimiento, limitaciones de carga/peso). Ventajas como plataforma educativa y limitaciones prácticas para tareas industriales; ejemplos y trabajos previos que usan Braccio o robots similares.
+
+  #linebreak()
+  De forma similar al descrito en la obra teatral, en un principio, los robots fueron concebidos como herramientas para sustituir a los humanos en tareas específicas debido a peligrosidad, precisión o repetitividad. Este hecho, unido con el auge de otros campos como la electrónica y la informática, ha permitido el desarrollo de robots cada vez más sofisticados y capaces de realizar tareas complejas, siendo éstos prácticamentente indispensables en la automatización industrial moderna.
+
+  #linebreak()
+#figure(image("template/figures/Capek.jpg", width: 70%), caption: [Representación original de la obra teatral de Karel Čapek, donde se observan un hombre junto a una mujer y tres robots.]) 
+
+
+  == Tipos de robots
+  Los robots son máquinas programables capaces de realizar tareas de forma autónoma o semiautónoma. Según la norma ISO (International Organization for Standardization) 8373 @iso, se clasifican en tres grandes grupos en función de su uso. Los robots industriales son robots necesarios en tareas de automatización industrial, los de servicio realizan tareas útiles para las personas o los equipos; y los médicos están destinados a ser utilizados como equipo electromédico o sistema electromédico.
+
+  === Robots industriales
+La ISO define un robot industrial como un manipulador multipropósito reprogramable, controlado automáticamente, programable en tres o más ejes, que puede estar fijo en un lugar o fijado a una plataforma móvil para su uso en aplicaciones de automatización en un entorno industrial. 
+
+\ En base a ello, la IFR (International Federation of Robotics) clasifica estos según su estructura mecánica.
+
+#linebreak()
+
+#figure(
+  table(
+    columns: (auto, 2fr, 1fr),
+    inset: 6pt,
+    align: horizon,
+    [Nombre], [Estructura mecánica], [Imagen],
+
+    [Robot cartesiano], [Manipulador que tiene tres articulaciones prismáticas, cuyos ejes forman un sistema de coordenadas cartesianas.], [#align(image("template/figures/cartesiano.png", width: 80%), center)],
+    [Robot SCARA], [Manipulador que tiene dos articulaciones rotatorias paralelas para proporcionar flexibilidad en un plano seleccionado.], [#align(image("template/figures/scara.png", width: 80%), center)],
+    [Robot articulado], [Manipulador con tres o más articulaciones rotatorias.], [#align(image("template/figures/articular.png", width: 80%), center)],
+    [Robot paralelo / Delta], [Manipulador cuyos brazos tienen enlaces que forman una estructura de bucle cerrado.], [#align(image("template/figures/paralelo.png", width: 80%), center)],
+    [Robot cilíndrico], [Manipulador con al menos una articulación rotatoria y una prismática, cuyos ejes forman un sistema de coordenadas cilíndrico.], [#align(image("template/figures/cilindrico.png", width: 80%), center)],
+    [Robot polar / esférico], [Manipulador con dos articulaciones rotatorias y una articulación prismática, cuyos ejes forman un sistema de coordenadas polares.], [#align(image("template/figures/polar.png", width: 80%), center)],
+  ),
+  caption: [Clasificación de los robots industriales en función de su estructura mecánica @ifr_industrial.]
+)
+#pagebreak()
+=== Robots de servicios
+La IFR define un robot de servicio como un mecanismo accionado programable en dos o más ejes, que se mueve dentro de su entorno, para realizar tareas útiles para humanos o equipos, excluyendo aplicaciones de automatización industrial. Según su definición en la norma ISO, requieren de cierto grado de autonomía, yendo desde una autonomía parcial hasta una total autonomía, es decir, con cierto grado de interacción con un operador @ifr_service.
+
+#linebreak()
+Esta institución distingue dos categorías de robots de servicio:
+\
+\
+- Robots de servicio para el consumidor: destinados a ser utilizados por particulares en entornos domésticos. No requieren de formación específica para su uso. Algunos ejemplos son los robots de limpieza domésticos, las sillas de ruedas automatizadas o los robots de interacción social.
+
+- Robots de servicio profesional: diseñados para realizar tareas específicas en entornos industriales o comerciales. Requieren de un operador con formación profesional. Algunos ejemplos son los robots de limpieza para espacios públicos, los robots de reparto o los robots de extinción de incendios. En la @fig-service se puede observar un mayor catálogo del uso de éstos.
+
+#linebreak()
+#figure(image("template/figures/service.png", width: 80%), caption: [Representación gráfica del número de productores de robots de servicio por grupo de aplicación y origen en 2024 @ifr_conference .])<fig-service>
+
+=== Robots médicos
+Los robots médicos constituyen ahora una tercera área de aplicación, catagorizándose anteriormente como una categoría especializada de robots de servicio. Sin embargo, tal como se documenta en este reportaje constituido por varias organizaciones sanitarias de Polonia @medical, su definición aún se muestra un poco confusa si se considera la ofertada por la ISO.
+
+#linebreak()
+Pese a eso, basándose en la definición oficial, los robots médicos están diseñados para asistir en la atención médica y quirúrgica, pudiendo realizar tareas como la cirugía asistida, la rehabilitación de pacientes y la entrega de suministros médicos. Su uso en entornos clínicos requiere un alto grado de precisión y fiabilidad, así como la capacidad de interactuar de manera segura con pacientes y profesionales de la salud.
+
+  == Estudio de mercado
+En la actualidad, la presencia de robots industriales en el mercado está en constante crecimiento, impulsada por la demanda de automatización en diversos sectores. Según la @fig-upgrade, más de 4 millones de robots industriales se encuentran operando en todo el mundo. Este crecimiento se debe a la adopción de tecnologías avanzadas, como la inteligencia artificial y la robótica colaborativa, que permiten a las empresas mejorar su eficiencia y competitividad.
+
+#linebreak()
+#figure(image("template/figures/upgrade_rob.png", width: 80%), caption: [Representación gráfica del crecimiento en la cantidad de robots industriales operando en el mercado durante los últimos 10 años @ifr_conference.])<fig-upgrade>
+
+#linebreak()
+Este incremento en la aplicación robótica se traduce en una oportunidad de mercado para aprender y desarrollar nuevas soluciones en el ámbito de la automatización y la robótica. En concreto, la versatilidad y funcionalidad que ofrecen los robots articulares, comúnmente llamados `brazos robóticos` ha impulsado a miles de estudiantes y profesionales del sector a contribuir en el desarrollo. Gracias a ello, se ha dado lugar a la creación de nuevas plataformas donde los usuarios pueden colaborar y compartir sus experiencias, enriqueciendo aún más el aprendizaje y la innovación en este campo.
+
+#linebreak()
+#figure(col3(align(image("template/figures/a1.png", width: 108%,), left), align(image("template/figures/a2.png", width: 80%), center), align(image("template/figures/a3.png", width: 120%), center)), caption: [Proyectos compartidos por la comunidad de Autodesk Instructables, donde se explica mediante tutoriales y documentación cómo construir brazos robóticos @instructables.])
+
+#linebreak()
+#figure(col3(align(image("template/figures/b1.png", width: 120%,), center), align(image("template/figures/b3.png", width: 80%), ), align(image("template/figures/b2.png", width: 90%), left)), caption: [Proyectos compartidos por la comunidad de Arduino Project Hub, donde se explica mediante tutoriales y documentación la construcción y control de brazos robóticos mediante Arduino @project_hub.])
+
+#linebreak()
+Con la proliferación de estas plataformas y la creciente demanda de soluciones robóticas, se ha generado un ecosistema vibrante y colaborativo que impulsa la innovación y el desarrollo en el campo de la robótica. Estas alternativas manuales también han servido como base para el desarrollo de kits educativos y plataformas de bajo coste, que permiten a estudiantes y entusiastas aprender sobre robótica y automatización de manera accesible y práctica, como el Braccio Tinkerkit de Arduino.
+
+#pagebreak()
+  == Braccio Tinkerkit
+  El Braccio Tinkerkit es un manipulador educativo de sobremesa diseñado para aprendizaje, prototipado y experimentación con control de robots manipuladores a bajo coste. Este kit de montaje ofrece una introducción versátil a la robótica, la mecánica y la electrónica, permitiendo a los usuarios ensamblar y programar el brazo para una variedad de tareas, como la manipulación de objetos, programación de trayectorias o control de articulaciones.
+  \ Destaca por su flexibilidad y enfoque educativo, constando de las siguientes características:
+  - Control por Arduino: Se integra perfectamente con el ecosistema de Arduino, lo que facilita su programación y control. Pese a que esta placa no se encuentre incluida en el kit, existen ofertas donde se incluye la placa junto con el kit a un precio competitivo.
+  - Múltiples Ejes de Movimiento: El brazo robótico cuenta con seis ejes controlados por servomotores, lo que le confiere una gran amplitud de movimiento y precisión. Figura ... //Añadir figura diagrama ejes
+  - Diseño Versátil: Puede ser ensamblado de diversas maneras para realizar distintas funciones. Además de la pinza incluida, se le pueden acoplar otros elementos como una cámara, un teléfono o incluso un panel solar para seguir el movimiento del sol.
+  - Kit de Montaje completo: el kit incluye la estructura mecánica del brazo, un conjunto de servomotores de tipo hobby que actúan como actuadores para cada articulación, una pinza/gripper simple, la electrónica de control basada en una placa Arduino y el cableado y tornillería necesarios para su montaje.
+
+ #linebreak()
+#figure(image("template/figures/Montajes.png", width: 90%), caption: [Montajes posibles del Braccio Tinkerkit, incluyendo algunos sustitutos de la pinza.])
+/* Adicional: en google ai studio mirar conversacion */
+// Especificaciones técnicas del braccio
+
+// Desarrollo estructura del robot, con diagrama ejes y tabla grados
+
+// Tabla características shield y arduino 
+
+  == Especificaciones técnicas (resumen)
+  #figure(
+    table(
+      columns: (auto, auto),
+      inset: 4pt,
+      align: horizon,
+      [Parámetro], [Valor],
+      [Grados de libertad], [5 (base, hombro, codo, muñeca, pinza) — configuración típica del kit.],
+      [Actuadores], [Servomotores tipo hobby (salida PWM).],
+      [Alcance útil], [~30–35 cm (dependiente de la configuración y montaje).],
+      [Carga útil], [Baja: del orden de decenas a pocos cientos de gramos; no recomendado para cargas pesadas.],
+      [Controlador], [Placa Arduino (Arduino UNO / ATmega328P) en el kit estándar; integrada mediante firmware para control de servos.],
+      [Comunicación con PC], [USB/serie (rosserial, puente custom) para integración con ROS/ROS2; en simulación se usa URDF/SDF y plugins de Gazebo.],
+      [Precisión y repetibilidad], [Limitadas por los servos hobby; adecuadas para tareas educativas y pruebas de concepto, no para tolerancias industriales.],
+      [Sensores], [Normalmente ausencia de encoders absolutos de alta resolución o sensores de fuerza; puede instrumentarse con sensores adicionales.]
+    ),
+    caption: [Tabla resumen de las características técnicas principales del Braccio Tinkerkit.]
+  )
+
+  Limitaciones y consideraciones de diseño
+  - El Braccio está pensado para enseñanza y prototipado; su electrónica y actuadores son económicos y ofrecen una precisión y rigidez limitada.
+  - Para tareas de pick‑and‑place con piezas ligeras y en rangos de trabajo reducidos es una opción válida, pero es necesario conocer sus límites de carga y dinámica.
+  - Si se desea una integración con ROS/ROS2 fiable, resulta recomendable disponer de un modelo URDF del robot (disponible en el paquete `Braccio_description`) y validar control y límites en simulación antes del despliegue en hardware.
+
+  Recomendaciones prácticas
+  - Versionar el URDF y los parámetros de control (PID, límites de posición) en el repositorio para reproducibilidad.
+  - Añadir micro‑sensores (encoders, sensores de fuerza) solo si la aplicación requiere mayor precisión o detección de agarre.
+  - Realizar pruebas de carga y repetibilidad en simulación (Gazebo/MoveIt2) antes de ensayos en el robot físico para evitar daños en los servos o en la estructura.
+
+
 
 = Plataformas de desarrollo y simulación
   El manipulador Braccio Tinkerkit forma parte del ecosistema Arduino, tal como se ha mencionado previamente. Debido a esta característica, puede ser simulado y controlado a través de diversas plataformas, destacando Matlab y ROS; siendo Gazebo, MoveIt y PyBullet las principales herramientas de simulación a destacar.
@@ -191,7 +312,8 @@ Este enfoque, visualizado con la claridad de RViz2 y las herramientas de GUI que
 \
 No obstante, para el proyecto actual, se ha optado por la combinación de Gazebo, MoveIt2 y RViz2, dada su integración nativa y comodidad, dejando la puerta abierta a Foxglove para futuras iteraciones.
 
-/* Crear diagrama ROS2, Moveit y Gazebo */
+/* Modificar estructura diagrama ROS2, Moveit y Gazebo */
+#figure(image("template/figures/diagrama.png"))
 
 
 = Diseño del sistema
