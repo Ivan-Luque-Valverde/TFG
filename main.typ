@@ -134,7 +134,7 @@ La ISO define un robot industrial como un manipulador multipropósito reprograma
     columns: (auto, 2fr, 1fr),
     inset: 6pt,
     align: horizon,
-    [Nombre], [Estructura mecánica], [Imagen],
+    [*Nombre*], [*Estructura mecánica*], [*Imagen*],
 
     [Robot cartesiano], [Manipulador que tiene tres articulaciones prismáticas, cuyos ejes forman un sistema de coordenadas cartesianas.], [#align(image("template/figures/cartesiano.png", width: 80%), center)],
     [Robot SCARA], [Manipulador que tiene dos articulaciones rotatorias paralelas para proporcionar flexibilidad en un plano seleccionado.], [#align(image("template/figures/scara.png", width: 80%), center)],
@@ -170,7 +170,7 @@ Pese a eso, basándose en la definición oficial, los robots médicos están dis
 En la actualidad, la presencia de robots industriales en el mercado está en constante crecimiento, impulsada por la demanda de automatización en diversos sectores. Según la @fig-upgrade, más de 4 millones de robots industriales se encuentran operando en todo el mundo. Este crecimiento se debe a la adopción de tecnologías avanzadas, como la inteligencia artificial y la robótica colaborativa, que permiten a las empresas mejorar su eficiencia y competitividad.
 
 #linebreak()
-#figure(image("template/figures/upgrade_rob.png", width: 80%), caption: [Representación gráfica del crecimiento en la cantidad de robots industriales operando en el mercado durante los últimos 10 años @ifr_conference.])<fig-upgrade>
+#figure(image("template/figures/upgrade_rob.png", width: 80%), caption: [Representación gráfica del crecimiento en la cantidad de robots industriales operando en el mercado durante los últimos 10 años según World Robotics en 2024 @ifr_conference.])<fig-upgrade>
 
 #linebreak()
 Este incremento en la aplicación robótica se traduce en una oportunidad de mercado para aprender y desarrollar nuevas soluciones en el ámbito de la automatización y la robótica. En concreto, la versatilidad y funcionalidad que ofrecen los robots articulares, comúnmente llamados `brazos robóticos` ha impulsado a miles de estudiantes y profesionales del sector a contribuir en el desarrollo. Gracias a ello, se ha dado lugar a la creación de nuevas plataformas donde los usuarios pueden colaborar y compartir sus experiencias, enriqueciendo aún más el aprendizaje y la innovación en este campo.
@@ -187,50 +187,154 @@ Con la proliferación de estas plataformas y la creciente demanda de soluciones 
 #pagebreak()
   == Braccio Tinkerkit
   El Braccio Tinkerkit es un manipulador educativo de sobremesa diseñado para aprendizaje, prototipado y experimentación con control de robots manipuladores a bajo coste. Este kit de montaje ofrece una introducción versátil a la robótica, la mecánica y la electrónica, permitiendo a los usuarios ensamblar y programar el brazo para una variedad de tareas, como la manipulación de objetos, programación de trayectorias o control de articulaciones.
-  \ Destaca por su flexibilidad y enfoque educativo, constando de las siguientes características:
+
+  #linebreak()
+  Destaca por su flexibilidad y enfoque educativo, constando de las siguientes características:
   - Control por Arduino: Se integra perfectamente con el ecosistema de Arduino, lo que facilita su programación y control. Pese a que esta placa no se encuentre incluida en el kit, existen ofertas donde se incluye la placa junto con el kit a un precio competitivo.
-  - Múltiples Ejes de Movimiento: El brazo robótico cuenta con seis ejes controlados por servomotores, lo que le confiere una gran amplitud de movimiento y precisión. Figura ... //Añadir figura diagrama ejes
+  - Múltiples Ejes de Movimiento: El brazo robótico cuenta con seis ejes controlados por servomotores, lo que le confiere una gran amplitud de movimiento y precisión. 
   - Diseño Versátil: Puede ser ensamblado de diversas maneras para realizar distintas funciones. Además de la pinza incluida, se le pueden acoplar otros elementos como una cámara, un teléfono o incluso un panel solar para seguir el movimiento del sol.
   - Kit de Montaje completo: el kit incluye la estructura mecánica del brazo, un conjunto de servomotores de tipo hobby que actúan como actuadores para cada articulación, una pinza/gripper simple, la electrónica de control basada en una placa Arduino y el cableado y tornillería necesarios para su montaje.
 
  #linebreak()
 #figure(image("template/figures/Montajes.png", width: 90%), caption: [Montajes posibles del Braccio Tinkerkit, incluyendo algunos sustitutos de la pinza.])
-/* Adicional: en google ai studio mirar conversacion */
-// Especificaciones técnicas del braccio
 
-// Desarrollo estructura del robot, con diagrama ejes y tabla grados
-
-// Tabla características shield y arduino 
-
-  == Especificaciones técnicas (resumen)
+#linebreak()
+A continuación, se presentan las especificaciones técnicas del Braccio Tinkerkit:
+#linebreak()
+\
   #figure(
     table(
-      columns: (auto, auto),
-      inset: 4pt,
-      align: horizon,
-      [Parámetro], [Valor],
-      [Grados de libertad], [5 (base, hombro, codo, muñeca, pinza) — configuración típica del kit.],
-      [Actuadores], [Servomotores tipo hobby (salida PWM).],
-      [Alcance útil], [~30–35 cm (dependiente de la configuración y montaje).],
-      [Carga útil], [Baja: del orden de decenas a pocos cientos de gramos; no recomendado para cargas pesadas.],
-      [Controlador], [Placa Arduino (Arduino UNO / ATmega328P) en el kit estándar; integrada mediante firmware para control de servos.],
-      [Comunicación con PC], [USB/serie (rosserial, puente custom) para integración con ROS/ROS2; en simulación se usa URDF/SDF y plugins de Gazebo.],
-      [Precisión y repetibilidad], [Limitadas por los servos hobby; adecuadas para tareas educativas y pruebas de concepto, no para tolerancias industriales.],
-      [Sensores], [Normalmente ausencia de encoders absolutos de alta resolución o sensores de fuerza; puede instrumentarse con sensores adicionales.]
+      columns: (auto, 0.5fr),
+      inset: 5pt,
+      align: horizon + center,
+      stroke: (x: none, y: 0.75pt),
+
+      [Peso], [792 g],
+      [Rango máximo de distancia de operación], [80 cm],
+      [Altura máxima], [52 cm],
+      [Anchura de la base], [14 cm],
+      [Anchura de la pinza], [9 cm],
+      [Longitud del cable], [40 cm],
+      [Peso máximo a una distancia de funcionamiento de 32 cm], [150 g],
+      [Peso máximo en la configuración mínima del Braccio], [400 g],
     ),
-    caption: [Tabla resumen de las características técnicas principales del Braccio Tinkerkit.]
+    caption: [Especificaciones técnicas principales del Braccio Tinkerkit, obtenidas directamente de la web oficial de compra de arduino @braccio.]
   )
 
-  Limitaciones y consideraciones de diseño
-  - El Braccio está pensado para enseñanza y prototipado; su electrónica y actuadores son económicos y ofrecen una precisión y rigidez limitada.
-  - Para tareas de pick‑and‑place con piezas ligeras y en rangos de trabajo reducidos es una opción válida, pero es necesario conocer sus límites de carga y dinámica.
-  - Si se desea una integración con ROS/ROS2 fiable, resulta recomendable disponer de un modelo URDF del robot (disponible en el paquete `Braccio_description`) y validar control y límites en simulación antes del despliegue en hardware.
+#linebreak()
+#col2(align(text[
+La estructura del robot se compone por: 
+- Una base circular que se mueve sobre un eje vertical, permitiendo la rotación completa del robot.
+- Una articulación "hombro" que une la base con la pieza siguiente "brazo".
+- Una articulación "codo", la cual enlaza dos piezas semiidénticas: "brazo" y "antebrazo".
+- Una articulación "muñeca vertical", que une "antebrazo" con una pequeña pieza que contiene la estructura de la pinza.
+- Una articulación "muñeca rotatoria", donde se acopla la pinza permitiendo una rotación sobre un eje en dirección de la garra.
+- La pinza o "gripper" encargada de la sujeción de objetos, cuyos valores toman 10 grados cuando está completamente abierta y de 73 grados cuando se encuentra cerrada.
+], left),
+ figure(image("template/figures/braccio.png", width: 100%), caption: [Estructura del Braccio Tinkerkit.]))
 
-  Recomendaciones prácticas
-  - Versionar el URDF y los parámetros de control (PID, límites de posición) en el repositorio para reproducibilidad.
-  - Añadir micro‑sensores (encoders, sensores de fuerza) solo si la aplicación requiere mayor precisión o detección de agarre.
-  - Realizar pruebas de carga y repetibilidad en simulación (Gazebo/MoveIt2) antes de ensayos en el robot físico para evitar daños en los servos o en la estructura.
+ #linebreak()
+ El movimiento de cada articulación es controlado por un servomotor de tipo hobby, los cuales son controlados mediante señales PWM (Pulse Width Modulation) generadas por la placa Arduino. 
+ \ Los servomotores se encuentran catalogados por número ascendente desde la base hasta la pinza, siendo el SR 431 el encargado de mover las primeras cuatro articulaciones y el SR 311 los dos últimos, tal como se muestra en la @tab-servos. 
+ 
 
+  #linebreak()
+  #figure(
+    table(
+      columns: (0.5fr, 0.5fr, 0.6fr, 0.5fr),
+      inset: 5pt,
+      align: horizon + center,
+      stroke: (x: none, y: 0.75pt),
+
+      [*Servomotor*], [*Articulación*],
+      [*Rango de movimiento (°)*], [*Modelo*],
+      [M1], [Base], [0-180], [SR 431],
+      [M2], [Hombro], [15-165], [SR 431],
+      [M3], [Codo], [0-180], [SR 431],
+      [M4], [Muñeca vertical], [0-180], [SR 431],
+      [M5], [Muñeca rotatoria], [0-180], [SR 311],
+      [M6], [Pinza], [10-73], [SR 311]
+    ),
+    caption: [Asignación de servomotores a las articulaciones del Braccio Tinkerkit, junto al rango de movimiento admisible de cada uno.]
+  )<tab-servos>
+
+   \ Las características de éstos se muestran en la @tab-servos2, mostrando un mayor torque en el modelo dedicado a las zonas de mayor carga del dispositivo robot.
+
+  #linebreak()
+  #figure(
+    table(
+      columns: (1.2fr, 0.8fr, 0.8fr),
+      inset: 5pt,
+      align: horizon + center,
+      stroke: (x: none, y: 0.75pt),
+
+    [*Característica*], [*SR 431*], [*SR 311*],
+    [Voltaje operativo (V)], [4.8–6.0], [4.8–6.0],
+    [Torque (kg-cm) a 6 V], [14.5], [3.8],
+    [Torque (kg-cm) a 4.8 V], [12.2], [3.1],
+    [Peso (g)], [62], [27],
+    [Dimensiones (mm)], [42 × 20.5 × 39.5], [31.3 × 16.5 × 28.6],
+    [Velocidad (s/60°) a 6 V], [0.18], [0.14],
+    [Velocidad (s/60°) a 4.8 V], [0.20], [0.12],
+
+    ),
+    caption: [Especificaciones comparativas de los servomotores utilizados en el Braccio Tinkerkit @braccio.]
+  )<tab-servos2>
+
+
+ #pagebreak()
+ Adicionalmente a ello, en el kit se incluye una placa de expansión (shield) que permite conectar los servomotores y otros componentes electrónicos de manera sencilla y ordenada. Esta placa se conecta a una placa Arduino Uno y proporciona los pines necesarios para la conexión de los servos, así como una interfaz para la alimentación y el control de los mismos. Sus características técnicas se describen en la @tab-shield.
+
+  #linebreak()
+  #figure(
+    table(
+      columns: (0.5fr, 0.5fr),
+      inset: 5pt,
+      align: horizon + center,
+      stroke: (x: none, y: 0.75pt),
+      [Versión], [V4],
+      [Voltaje de funcionamiento], [5 V],
+       [Consumo de potencia], [20 mW],
+      [Corriente Máxima (M1-M4)], [1.1 A],
+       [Corriente Máxima (M5-M6)], [750 mA],
+    ),
+    caption: [Especificaciones técnicas de la placa mostrada en la Figura 2.8.]
+  )<tab-shield>
+
+#col2(
+    figure(align(image("template/figures/shield.jpeg", width: 100%), center), caption: [Placa de expansión (shield) utilizada para la conexión de los servomotores. En ella se puede visualizar la disposición de los pines naranjas etiquetados con la numeración correspondiente]),
+    figure(align(image("template/figures/Arduino_Uno.jpg", width: 72%), center), caption: [Placa Arduino Uno utilizada como controlador principal del robot Braccio Tinkerkit.]
+  ),
+)
+
+#linebreak()
+La placa Arduino UNO es la base del sistema y encargada de la comunicación entre los diferentes componentes del robot. Esta placa se conecta a la shield y proporciona la interfaz necesaria para enviar las órdenes de los motores. Sus especificaciones técnicas se describen en la @tab-arduino.
+
+
+  #linebreak()
+  #figure(
+    table(
+      columns: (0.5fr, 0.5fr),
+      inset: 5pt,
+      align: horizon + center,
+      stroke: (x: none, y: 0.75pt),
+[Microcontrolador],  [Microchip ATmega328P],
+[Voltaje de funcionamiento], [5 V],
+[Voltaje de entrada], [7-12 V],
+[Pines de E/S digitales], [14 (6 proporcionan salida PWM)],
+[Pines de entrada analógica], [6],
+[Corriente DC por Pin de E/S], [20 mA],
+[Corriente CC para Pin de 3.3V], [50 mA],
+[Memoria Flash], [32 KB],
+[SRAM], [2 KB],
+[EEPROM], [1 KB],
+[Velocidad del reloj], [16 MHz],
+[Longitud], [68.6mm],
+[Ancho], [53,4mm],
+[Peso], [25g]
+    ),
+    caption: [Especificaciones técnicas de la placa mostrada en la Figura 2.9 @arduino.]
+  )<tab-arduino>
 
 
 = Plataformas de desarrollo y simulación
