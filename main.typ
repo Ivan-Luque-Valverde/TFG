@@ -414,10 +414,10 @@ Finalmente, la abstracción que provee ros2_control actúa como el puente crucia
 Este enfoque, visualizado con la claridad de RViz2 y las herramientas de GUI que nos ofrece, completa un sistema perfectamente integrado en el entorno de la robótica industrial, pudiendo amplificar horizontes con la potencia de datos de Foxglove Studio. 
 \
 \
-No obstante, para el proyecto actual, se ha optado por la combinación de Gazebo, MoveIt2 y RViz2, dada su integración nativa y comodidad, dejando la puerta abierta a Foxglove para futuras iteraciones.
+No obstante, para el proyecto actual, se ha optado por la combinación de Gazebo, MoveIt2 y RViz2, dada su integración nativa y comodidad, dejando la puerta abierta a Foxglove para futuras iteraciones. En la @fig-diagram se muestra un ejemplo del flujo de datos y herramientas relevantes durante el desarrollo del sistema.
 
-/* Modificar estructura diagrama ROS2, Moveit y Gazebo */
-#figure(image("template/figures/diagrama.png"))
+
+#figure(image("template/figures/diagrama.png"), caption: [Diagrama de flujo del sistema ROS2 con MoveIt2, Gazebo y el resto de herramientas utilizadas para la simulación y control del proyecto.]) <fig-diagram>
 
 
 = Diseño del sistema
@@ -439,7 +439,14 @@ Está organizado en varios paquetes que gestionan diferentes aspectos del sistem
 
 #linebreak()
 
-  #figure(image("template/figures/Sim_base.png", width: 80%), caption: [Ilustración de la simulación en RViz y Gazebo del robot manipulador realizando una trayectoria. En la pantalla izquierda, se puede observar el brazo en sus posiciones inicial, actual y final. A su derecha, la representación de Gazebo mostrando esa posición actual junto al entorno simulado.]) 
+#figure(
+  col2(
+    align(image("template/figures/Rviz_sim.png", width: 113%), left),
+    align(image("template/figures/Gazebo_sim.png", width: 80%), right)
+  ),
+  caption: [Ilustración de la simulación en RViz y Gazebo del robot manipulador realizando una trayectoria. En la izquierda, se puede observar el brazo en sus posiciones inicial, actual y final. A su derecha, la representación de Gazebo mostrando esa posición actual junto al entorno simulado.]
+)
+
 
 
 #pagebreak()
@@ -672,25 +679,28 @@ El subsistema de detección de objetos tiene por objetivo localizar los cubos pr
   La matriz de homografía se utiliza para mapear puntos de la imagen a coordenadas del mundo, teniendo en cuenta la perspectiva de la cámara. Bien es cierto que tiene infinidad de usos y, al tratarse de una cámara cenital, su relevancia es menor pues se trabaja en un escenario 2D ideal, sin distorsión. No obstante, para este proyecto y, de cara a la implementación real, es importante contar con esta matriz en términos de precisión.
 
 #linebreak()
-  El cálculo de esta matriz es bastante sencillo. Para ello, se han colocado 4 cubos rojos en posiciones conocidas dentro del entorno simulado (metros): 
+  El cálculo de esta matriz es bastante sencillo. Para ello, se han colocado 4 cubos rojos en posiciones conocidas dentro del entorno simulado. Mediante el script de detección de objetos anterior se han detectado éstos y calculado sus centroides en píxeles, tal como se muestra en la @fig-cam, obteniendo las posiciones indicadas en la @fig-pos.
 
-  - corner1: (-0.35, -0.25)
-  - corner2: (-0.35, 0.25)
-  - corner3: (0.35, 0.25)
-  - corner4: (0.35, -0.25)
+  #linebreak()
+  #figure(
+    table(
+      columns: (auto, 0.8fr, 0.8fr),
+      inset: 5pt,
+      align: horizon + center,
+      stroke: (x: 0.5pt, y: 0.75pt),
+    [*Cubo rojo*], [*Posición real XY (m)*], [*Posición en píxeles XY (px)*],
+    [1], [-0.35, -0.25], [202, 75],
+    [2], [-0.35, 0.25], [436, 75],
+    [3], [0.35, 0.25], [436, 403],
+    [4], [0.35, -0.25], [202, 403],
+    ),
+    caption: [Posiciones de los cubos rojos en el entorno simulado y sus centroides capturados por la cámara en píxeles.]
+  )<fig-pos>
 
-Mediante el script de detección de objetos anterior se han detectado éstos y calculado sus centroides en píxeles, tal como se muestra en la @fig-cam, obteniendo las posiciones (píxeles):
-  
-  - corner1: (202,75)
-  - corner2: (436,75)
-  - corner3: (436,403)
-  - corner4: (202,403)
 
 #linebreak()
   Combinando esta posición en píxeles con su ubicación en el mundo real, se ha aplicado la función `cv2.findHomography` con el fin de la obtención de esta matriz. 
-
-#linebreak()
-  La matriz obtenida se puede visualizar en la @fig-Homografia y se almacena en _camera_calibration.json_ para su uso posterior en la conversión de coordenadas de la cinemática inversa.
+\  La matriz obtenida se puede visualizar en la @fig-Homografia y se almacena en _camera_calibration.json_ para su uso posterior en la conversión de coordenadas de la cinemática inversa.
 
   #linebreak()
   #figure(align(image("template/figures/Hom.png", width: 100%), center), caption: [Lectura del terminal de Ubuntu tras la ejecución de _Calculate_homography.py_. Representa la matriz de homografía calculada .])<fig-Homografia>
@@ -699,6 +709,8 @@ Mediante el script de detección de objetos anterior se han detectado éstos y c
   #linebreak()
   Finalmente, se ha probado dicha matriz mediante un script de validación que compara las posiciones conocidas de los cubos con las posiciones calculadas a partir de sus centroides en píxeles, así como con posiciones interiores a ese área definida. Los resultados muestran un error prácticamente insignificante, lo cual es perfecto para las tareas de pick‑and‑place previstas.
 
+ #linebreak() 
+
 #figure(align(image("template/figures/Test_hom.png", width: 100%), center), caption: [Lectura del terminal de Ubuntu tras la ejecución de _test_homography.py_. Representa los resultados de la validación de la matriz de homografía donde el error en la reproyección es muy bajo. Al comparar la posición real de un cubo adicional (0.35, 0.05) con la posición estimada mediante la matriz (0.3497, 0.04864) se observa un error de 1.38 mm, ámpliamente asumible para un robot manipulador.])
 
 
@@ -706,15 +718,13 @@ Mediante el script de detección de objetos anterior se han detectado éstos y c
 
 
 = Planificación de agarre y manipulación
-  Algoritmos y herramientas: OMPL, MoveIt2 para planificación de trayectorias; GraspIt!, Dex‑Net y enfoques basados en aprendizaje para planificación de agarres. Métricas de calidad del agarre y problemas prácticos (contactos, incertidumbre en fricción).
+
   == Cinemática directa e inversa
   == Repositorio atach/detach
 
 
   == Transferencia sim‑to‑real y validación experimental
   Técnicas para reducir la brecha: domain randomization, calibración de cámara y brazo, system identification y HIL. Diseño experimental para comparar simulación y prototipo real, incluyendo métricas y repetibilidad.
-
-= Montaje del robot físico
 
 
 = Evaluación y métricas
@@ -741,7 +751,6 @@ Mediante el script de detección de objetos anterior se han detectado éstos y c
 
 
   
-  #figure(image("template/figures/Logo.svg",width: 16%),caption:"Imagen de prueba")
 
   #pagebreak(to: "odd")
 ]
