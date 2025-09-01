@@ -722,10 +722,10 @@ Posteriormente, se traspasa esta información a un archivo de configuración don
   La cinemática inversa es el proceso de determinar las posiciones articulares necesarias para que el efector final del robot alcance una posición y orientación deseadas en el espacio cartesiano. En este proyecto, se ha implementado un enfoque basado en la geometría del robot Braccio Tinkerkit, utilizando las longitudes de sus eslabones y las restricciones de sus articulaciones.
 === Fundamentos teóricos
 El sistema utilizado para el cálculo de la cinemática inversa se basa en el marco teórico empleado por Will Stedden @chef. Este enfoque se centra en la geometría del brazo y las limitaciones de sus ángulos articulares. 
-/* insertar imagen brazo y angulos */
+/* insertar imagen brazo RVIZ completamente recto, excepto articulación shoulder a 45º y hacer misma imagen que aparece en chef */
 
 #linebreak()
-En primer lugar se ha instanciado la longitud del brazo total en su máxima extensión, siendo ésta L=0.3025m, junto al Offset desde la base del brazo hasta el efector final, que se ha establecido en l=0.064m.
+En primer lugar se ha instanciado la longitud del brazo total en su máxima extensión, siendo ésta L=0.3025m, junto al Offset desde la muñeca hasta el efector final, que se ha establecido en l=0.064m.
 
 #linebreak()
 Luego, se transforman las posiciones (x,y) en coordenadas polares, se verifica la altura y se estudia la alcanzabilidad del radio de trabajo, calculado mediante la relación entre las longitudes anteriores y el ángulo máximo y mínimo del hombro en radianes.
@@ -736,7 +736,15 @@ $ #sym.rho#sub[min] = 0.064 + 0.3025 dot.op cos(pi/4) = 0.278 [m] $
 "Nota": el ángulo máximo del codo se establece en 45º para evitar colisiones con la base del robot y el resto de articulaciones, pese a que su rango de funcionamiento real es más amplio [15º,165º].
 Este hecho se debe en parte al método de recolección planteado, donde se ha optado por un agarre directo o frontal, frente a un método basado en un agarre desde arriba, donde se cogen objetos desde una vista superior, pero el rango de actuación es más limitado.
 
-/* Insertar imagen dos tipos de agarres */
+#linebreak()
+  #figure(
+  col2(
+    align(image("template/figures/pinza.png", width: 80%), right),
+    align(image("template/figures/pinza2.png", width: 80%), left)
+  ),
+  caption: [Representación de las pinzas del robot, mostrando los dos tipos de agarre. El primero es un agarre en pinza o directo, ideal para objetos de media y larga distancia, mientras que el segundo es un agarre en forma de gancho, ideal para objetos de corta distancia.]
+)
+
 
 #linebreak()
 Definidos los límites de trabajo, se procede al cálculo de los ángulos articulares (@ecuacion):
@@ -746,16 +754,9 @@ Definidos los límites de trabajo, se procede al cálculo de los ángulos articu
 
 #figure(
   align(center)[
-    // Ecuación para el ángulo del hombro
     $ theta_"shoulder" = arccos((rho - l) / L) $
-    
-    // Ecuación para el ángulo de la muñeca
     $ theta_"wrist" = theta_"shoulder" + pi / 2 $
-    
-    // Ecuación para el ángulo del codo
     $ theta_"elbow" = pi / 2 - 2 dot theta_"shoulder" $
-    
-    // Vector de configuración de ángulos
     $ "Ángulos" = [phi, theta_"shoulder", theta_"elbow", theta_"wrist", theta_"gripper"] $
   ],
   caption: [Ecuaciones para el cálculo de los ángulos articulares de un brazo robótico.],
@@ -766,6 +767,9 @@ Previo al cálculo final de la cinemática, donde la altura del efector final es
 
 #linebreak()
 La solución propuesta para este problema ha sido implementar una lógica de $phi$ simétrica, de modo que si $phi$ es negativo, el código intenta reflejar el ángulo en la otra cara del robot para que la base pueda alcanzar dicha posición girando hacia el otro lado y "simular" un rango de movimiento de 360º del robot. Es imprescindible explicar y entender esta metodología pues afecta directamente al cálculo de la cinemática inversa y a la planificación de las trayectorias del robot explicadas posteriormente.
+
+#linebreak()
+#figure(image("template/figures/Simetria.jpeg", width: 90%), caption: [Representación del problema de la base y su rango de movimiento. En la imagen izquierda se identifica una posición objetivo que se encuentra en el rango (0, 180º). En la derecha, el objeto se encuentra fuera de este rango, lo que implica una solución donde el robot oriente su base como en el primer caso, y aplique simetría en el codo y demás articulaciones del robot.])
 \ La metodología implicada es la siguiente:
 
 + Se obtiene el ángulo $phi$ en coordenadas polares.
@@ -774,7 +778,6 @@ La solución propuesta para este problema ha sido implementar una lógica de $ph
 + Se normaliza a un rango de [0, 2$pi$] si fuese necesario. 
 + Se obtienen los ángulos articulares explicados anteriormente, con la única excepción de $theta_"shoulder"$, el cual se calcula su espejo antes de ser enviado por el vector de ángulos: $theta_"shoulder" = pi - theta_"shoulder"$.
 
-/* Insertar imagen representativa del problema */
 
 === Cálculo de las posiciones de aproximación y agarre
 
