@@ -584,7 +584,7 @@ Tal como se ha comentado previamente, esta implementación prioriza la sencillez
   - Conecta con los servicios de Gazebo para la lógica de "pick and place", llamando a los servicios de _attach_ y _detach_ del plugin _libgazebo_link_attacher.so_. Éstos:
     - Detectan el objeto más cercano utilizando la información de los sensores y la posición del gripper.
     - Comprueban que la distancia entre el gripper y el objeto es adecuada, inferior a 15 cm.
-    - Si ambas condiciones se cumplen, envía la petición de _attach/detach_ al servicio correspondiente, mostrado en la @fig-atach
+    - Si ambas condiciones se cumplen, envía la petición de _attach/detach_ al servicio correspondiente, mostrado en la @fig-attach
 + El sistema _ros2_control_ recibe estas trayectorias y las ejecuta en el robot simulado o real.
 #linebreak()
 Este control proporciona una vía rápida y segura para validar la arquitectura de control, probar el mapeo de ejes y calibrar parámetros como el velocity_factor antes de automatizar. 
@@ -595,7 +595,7 @@ de un sistema de control basado en visión del manipulador real.
 #figure(
   align(image("template/figures/atach.png", width: 100%), center),
   caption: [Servicio de Gazebo para el pick and place de objetos mediante el plugin gazebo_link_attacher. En la imagen se observa la petición de attach al servicio, el cálculo de las distancias respecto la posición del gripper y los cubos; y tras la verificación del umbral de cercanía, la ejecución de la acción entre la pinza y el blue_cube1.]
-) <fig-atach>
+) <fig-attach>
 
 
 = Percepción y localización de objetivos
@@ -721,15 +721,14 @@ Posteriormente, se traspasa esta información a un archivo de configuración don
 == Cinemática inversa
   La cinemática inversa es el proceso de determinar las posiciones articulares necesarias para que el efector final del robot alcance una posición y orientación deseadas en el espacio cartesiano. En este proyecto, se ha implementado un enfoque basado en la geometría del robot Braccio Tinkerkit, utilizando las longitudes de sus eslabones y las restricciones de sus articulaciones.
 === Fundamentos teóricos
-El sistema utilizado para el cálculo de la cinemática inversa se basa en el marco teórico empleado por Will Stedden @chef. Este enfoque se centra en la geometría del brazo y las limitaciones de sus ángulos articulares. 
+El sistema utilizado para el cálculo de la cinemática inversa se basa en el marco teórico empleado por Will Stedden @chef. Este enfoque se centra en la geometría del brazo y las limitaciones de sus ángulos articulares mostrados en la @fig-teoria.
 
-/* insertar imagen brazo RVIZ completamente recto, excepto articulación shoulder a 45º y hacer misma imagen que aparece en chef */
+#figure(image("template/figures/Teoria.png", width: 80%), caption: [Diagrama esquemático del brazo robótico, mostrando las longitudes de los eslabones implicados y las articulaciones relevantes para el cálculo de la cinemática inversa descrito posteriormente.]) <fig-teoria>
+
 
 #linebreak()
 En primer lugar se ha instanciado la longitud del brazo total en su máxima extensión, siendo ésta L=0.3025m, junto al Offset desde la muñeca hasta el efector final, que se ha establecido en l=0.064m.
-
-#linebreak()
-Luego, se transforman las posiciones (x,y) en coordenadas polares, se verifica la altura y se estudia la alcanzabilidad del radio de trabajo, calculado mediante la relación entre las longitudes anteriores y el ángulo máximo y mínimo del hombro en radianes.
+\ Luego, se transforman las posiciones (x,y) en coordenadas polares, se verifica la altura y se estudia la alcanzabilidad del radio de trabajo, calculado mediante la relación entre las longitudes anteriores y el ángulo máximo y mínimo del hombro en radianes.
 
 $ #sym.rho#sub[max] = 0.064 + 0.3025 dot.op cos(0.27) = 0.356 [m] $
 $ #sym.rho#sub[min] = 0.064 + 0.3025 dot.op cos(pi/4) = 0.278 [m] $
@@ -753,6 +752,7 @@ Definidos los límites de trabajo, se procede al cálculo de los ángulos articu
 + Se aplica el cálculo del ángulo del codo y muñeca basados en el ángulo del hombro con la finalidad de mantener la orientación vertical. 
 + Se devuelven los ángulos articulares calculados en el orden adecuado para el braccio, junto a $phi$, utilizada para la rotación de la base y $theta#sub[gripper]$, que se mantiene constante.
 
+#linebreak()
 #figure(
   align(center)[
     $ theta_"shoulder" = arccos((rho - l) / L) $
@@ -769,7 +769,6 @@ Previo al cálculo final de la cinemática, donde la altura del efector final es
 #linebreak()
 La solución propuesta para este problema ha sido implementar una lógica de $phi$ simétrica, de modo que si $phi$ es negativo, el código intenta reflejar el ángulo en la otra cara del robot para que la base pueda alcanzar dicha posición girando hacia el otro lado y "simular" un rango de movimiento de 360º del robot. Es imprescindible explicar y entender esta metodología pues afecta directamente al cálculo de la cinemática inversa y a la planificación de las trayectorias del robot explicadas posteriormente.
 
-#linebreak()
 #figure(image("template/figures/Simetria.jpeg", width: 90%), caption: [Representación del problema de la base y su rango de movimiento. En la imagen izquierda se identifica una posición objetivo que se encuentra en el rango (0, 180º). En la derecha, el objeto se encuentra fuera de este rango, lo que implica una solución donde el robot oriente su base como en el primer caso, y aplique simetría en el codo y demás articulaciones del robot.])
 \ La metodología implicada es la siguiente:
 
@@ -791,25 +790,35 @@ Las posiciones se determinan a partir de la cinemática inversa y los ángulos a
 #linebreak()
 El cálculo de estas posiciones se realiza mediante la función `calculate_ik_xyz` en _inverse_kinematics_calculator.py_, que toma como entrada las coordenadas del objeto (x, y, z) y devuelve los ángulos articulares necesarios para alcanzar dichas posiciones. Su finalidad es ajustar principalmente el codo para poder controlar dicha altura efectiva.
 Para este cálculo, se extraen los ángulos obtenidos previamente y se ajustan según la lógica de simetría descrita anteriormente:
+
+#linebreak()
 - Configuración estándar: se establece una altura de referencia estándar de $Z_N = 0.05 m $ y se configura un factor de sensibilidad dinámico basado en la extensión del hombro:
+
   - Si el hombro está muy extendido, es decir, es un elemento alejado, $Z_f = 12 $.
   - Si el hombro está en una posición intermedia, $Z_f = 10 $.
   - Si el hombro está en una posición cercana, $Z_f = 8 $.
 
   Es importante destacar que estos valores son aproximados y pueden ajustarse según las necesidades específicas de la tarea y la configuración del brazo robótico. 
 
-#linebreak()
+#pagebreak()
 
   Con ellos, se calcula la altura ajustada del  codo:  $ Z_a = (Z - Z_N) dot Z_f $ $ theta_"elbow" = theta_"elbow" + Z_a $
    Y se ajusta la posición de la muñeca para mantener la orientación y compensar esta diferencia entre el ángulo original y final del codo:
 $ theta_"wrist" = theta_"wrist" + #sym.Delta theta_"elbow" dot 1/2 $
 
+#figure(image("template/figures/Cálculo_ik.png", width: 90%), caption: [Lectura del terminal de Ubuntu. Muestra el cálculo de la cinemática inversa para una posición objetivo x=0.35, y=0.05 y z=0.025, donde se observa el procedimiento ejecutado hasta el cálculo final, mostrando finalmente la posición de agarre y aproximación en radianes y grados.])
+
+#linebreak()
 - Configuración simétrica: para este caso, aplicar los mismos conceptos, así como la simetría es un proceso complejo puesto que se debe forzar al efector a bajar, compensando que la cadena cinemática se alarga. Por ello, se establecen dos estrategias: 
   - Alturas muy bajas: se aumenta el ángulo del hombro, se alinea el codo y se baja la muñeca drasticamente para que el efector final pueda bajar lo máximo posible.
   - Alturas moderadas: el efecto es similar a la configuración estándar. Se reduce el ángulo del codo moderadamente y se compensa éste con la muñeca para mantener la orientación. 
-  Los cálculos de esta metodología se basan principalmente en constantes empíricas obtenidas tras múltiples pruebas y errores, las cuales pueden ser ajustadas según las necesidades específicas de la tarea y la configuración del brazo robótico. Por ello, no se detallan las ecuaciones específicas en este documento. Sin embargo, en el repositorio @my_repo se pueden visualizar cada una de ellas en el archivo correspondiente. 
 
-/* Insertar imagen que muestre las posiciones calculadas, posiblemente usándolas como un script ejecutable mejor */
+
+  #figure(image("template/figures/Calculo_ik_sim.png", width: 89%), caption: [Lectura del terminal de Ubuntu. Muestra el cálculo de la cinemática inversa para una posición objetivo simétrica: x=0.28, y=-0.15 y z=0.025, donde se observa el procedimiento ejecutado hasta el cálculo final. La posición de agarre se establece en [151.8, 174.3, 87.1, 176.1, 90.0][º], siendo la posición de aproximación [151.8, 147.0, 24.0, 123.0, 90.0][º].])
+
+  Los cálculos de esta metodología se basan principalmente en constantes empíricas obtenidas tras múltiples pruebas y errores, las cuales pueden ser ajustadas según las necesidades específicas de la tarea y la configuración del brazo robótico. Por ello, no se detallan las ecuaciones específicas en este documento. Sin embargo, en el repositorio @my_repo se pueden visualizar cada una de ellas en el archivo correspondiente.
+
+
 
 #linebreak()
 Las posiciones calculadas mediante la cinemática inversa se almacenan en variables específicas para la aproximación y el agarre. Posteriormente, se abre el archivo _pick_and_place_config.yaml_, donde se encuentran las posiciones de home, reposo, depósito y objetivo. Entonces, se actualizan las entradas correspondientes a las posiciones objetivo del robot, sobrescribiendo los valores previos con los nuevos ángulos articulares obtenidos. Este proceso garantiza que el sistema de planificación y ejecución utilice siempre las posiciones más precisas y actualizadas para cada tarea de pick-and-place.
@@ -821,7 +830,8 @@ La ejecución del script proporciona información sobre las posiciones probadas,
 #linebreak()
 La base del uso de este script se basa en encontrar posiciones de trabajo adecuadas para el robot, asegurando que pueda operar siempre en las mejores posiciones posibles, donde se minimicen los errores de posicionamiento y se maximice la eficiencia en las tareas de pick-and-place.
 
-/* Insertar imagen que muestre el test en acción */
+#linebreak()
+  #figure(image("template/figures/ik_test.png", width: 85%), caption: [Lectura del terminal de Ubuntu tras la ejecución del script _ik_workspace_tester_py_. Muestra el resultado de las pruebas de cinemática inversa, indicando si las posiciones son aptas o si presentan problemas. En este fragmento, se muestra un rango de posición X comprendido entre 0.21 y 0.23, mientras que el rango Y se encuentra entre 0.15 y 0.30, con un paso de 0.02, mostrando así las posiciones cómodas para la ejecución del robot en un rango determinado.])
 
 == Repositorio attach/detach
 
@@ -834,12 +844,14 @@ En versiones anteriores de ROS y Gazebo, se utilizaba el pluging de Planning Sce
 Ante ello, la solución adoptada ha sido emplear el plugin _libgazebo_link_attacher.so_, implementado por la universidad de Cranfield @linkattacher. Este plugin permite simular el agarre y la liberación de objetos en el entorno de Gazebo, a través de la instalación del mismo y mediante un sencillo sistema de envío y recepción de mensajes.
 
 #linebreak()
-La interfaz proporcionada gestiona las colisiones y los contactos entre el robot y los objetos, por medio de una llamada al servicio /ATTACHLINK y /DETACHLINK. Estos servicios úicamente requieren del model_name y link_name de ambos elementos a unir o separar, es decir, el robot y el objeto a manipular. El problema de esto ha recaído en que, pese a estar muy bien explicado en su repositorio, no se ha mostrado una vía clara para un sistema donde el objeto a manipular cambia dinámicamente, como es el caso de este proyecto. Es por ello que, tal como se explicó anteriormente en la @attach-detach, ha sido necesario implementar un sistema dinámico basado en la distancia entre los elementos implicados.
+La interfaz proporcionada gestiona las colisiones y los contactos entre el robot y los objetos, por medio de una llamada al servicio /ATTACHLINK y /DETACHLINK. Estos servicios únicamente requieren del _model_name_ y _link_name_ de ambos elementos a unir o separar, es decir, el robot y el objeto a manipular. El problema de esto ha recaído en que, pese a estar muy bien explicado en su repositorio, no se ha mostrado una vía clara para un sistema donde el objeto a manipular cambia dinámicamente, como es el caso de este proyecto. Es por ello que, tal como se explicó anteriormente en la @attach-detach, ha sido necesario implementar un sistema dinámico basado en la distancia entre los elementos implicados.
 
 #linebreak()
 #figure(image("template/figures/detach.png", width: 100%), caption: [Lectura del terminal de Ubuntu. Representa la petición de detach al servicio, el cálculo de las distancias respecto la posición del gripper y los cubos; y la ejecución de la acción de detach, donde se puede mostrar el cubo azul cayendo desde la pinza.])
 
+En la @fig-attach mostrada anteriormente, se puede observar la acción inversa, el proceso de coger el cubo.
 
+#pagebreak()
 == Flujo de acción
 El flujo de acción del sistema de pick-and-place se basa en la integración de los subsistemas de percepción, planificación y control. A continuación, se detalla el proceso completo desde la detección del objeto hasta la ejecución de la tarea, descrito por el script _vision_auto_pick_and_place.py_:
 - El nodo arranca y se suscribe a los tópicos de detección de objetos y estados del robot. Carga la calibración de la cámara obtenida mediante homografía y crea los clientes encargados de la lógica de _attach_ y _detach_.
@@ -849,18 +861,20 @@ El flujo de acción del sistema de pick-and-place se basa en la integración de 
 - El ejecutor carga las posiciones desde el archivo de configuración, planifica con Moveit2 y ejecuta la trayectoria.
 - Se monitorea el estado del robot y se gestionan las colisiones y contactos mediante los servicios /ATTACHLINK y /DETACHLINK en base al cierre y apertura de la pinza.
 - Finalmente, se retorna a la posición de home, marca el objeto como procesado y se espera la siguiente detección.
-/* Insertar diagrama que haga esto y capturas de pantalla del proceso */
 
+#linebreak()
+#figure(image("template/figures/flujo.png", width: 100%), caption: [Diagrama del flujo de acción del sistema de pick-and-place, mostrando la interacción entre los subsistemas de percepción, planificación y control.]) 
+
+#linebreak()
+En la @fig-demo se muestra la ejecución del sistema de pick-and-place para la recolección de un cubo, unificando todos los subsistemas y etapas del proceso explicadas.
+
+#figure(image("template/figures/demo.png", width: 125%), caption: [Lectura del terminal de Ubuntu. Representa la ejecución completa del sistema de pick-and-place, desde la detección del objeto green_cube1 hasta la finalización de la tarea, mostrando las posiciones calculadas y los estados del robot en cada paso del proceso. Al finalizar, detecta el cubo green_cube2 y repite el proceso hasta que no existan más elementos.])<fig-demo>
 
 
 = Sim to real y validación
+= Conclusión
+// Huecos detectados y oportunidades para el TFG
 
-= Huecos detectados y oportunidades para el TFG
-  Resumen de cuestiones poco cubiertas en la literatura: modelos dinámicos de alta fidelidad para robots educativos, pipelines integrados Arduino+micro‑ROS+MoveIt2, datasets para piezas educativas; propuestas: modelado URDF/SDF del Braccio, pipeline RGB‑D para pose, integración y validación sim‑to‑real.
-
-  // Referencias sugeridas para Bibliografía:
-  // - Documentación: ROS 2, MoveIt2, Gazebo/Ignition, PyBullet
-  // - Herramientas/Artículos: Dex‑Net, GraspIt!, surveys sobre sim‑to‑real, papers sobre ros2_control y micro‑ROS
 
 
 
