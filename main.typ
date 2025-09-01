@@ -137,11 +137,11 @@ La ISO define un robot industrial como un manipulador multipropósito reprograma
     [*Nombre*], [*Estructura mecánica*], [*Imagen*],
 
     [Robot cartesiano], [Manipulador que tiene tres articulaciones prismáticas, cuyos ejes forman un sistema de coordenadas cartesianas.], [#align(image("template/figures/cartesiano.png", width: 80%), center)],
-    [Robot SCARA], [Manipulador que tiene dos articulaciones rotatorias paralelas para proporcionar flexibilidad en un plano seleccionado.], [#align(image("template/figures/scara.png", width: 80%), center)],
+    [Robot SCARA], [Manipulador que tiene dos articulaciones rotatorias paralelas para proporcionar flexibilidad en un plano seleccionado.], [#align(image("template/figures/Scara.png", width: 80%), center)],
     [Robot articulado], [Manipulador con tres o más articulaciones rotatorias.], [#align(image("template/figures/articular.png", width: 80%), center)],
     [Robot paralelo / Delta], [Manipulador cuyos brazos tienen enlaces que forman una estructura de bucle cerrado.], [#align(image("template/figures/paralelo.png", width: 80%), center)],
     [Robot cilíndrico], [Manipulador con al menos una articulación rotatoria y una prismática, cuyos ejes forman un sistema de coordenadas cilíndrico.], [#align(image("template/figures/cilindrico.png", width: 80%), center)],
-    [Robot polar / esférico], [Manipulador con dos articulaciones rotatorias y una articulación prismática, cuyos ejes forman un sistema de coordenadas polares.], [#align(image("template/figures/polar.png", width: 80%), center)],
+    [Robot polar / esférico], [Manipulador con dos articulaciones rotatorias y una articulación prismática, cuyos ejes forman un sistema de coordenadas polares.], [#align(image("template/figures/Polar.png", width: 80%), center)],
   ),
   caption: [Clasificación de los robots industriales en función de su estructura mecánica @ifr_industrial.]
 )
@@ -722,6 +722,7 @@ Posteriormente, se traspasa esta información a un archivo de configuración don
   La cinemática inversa es el proceso de determinar las posiciones articulares necesarias para que el efector final del robot alcance una posición y orientación deseadas en el espacio cartesiano. En este proyecto, se ha implementado un enfoque basado en la geometría del robot Braccio Tinkerkit, utilizando las longitudes de sus eslabones y las restricciones de sus articulaciones.
 === Fundamentos teóricos
 El sistema utilizado para el cálculo de la cinemática inversa se basa en el marco teórico empleado por Will Stedden @chef. Este enfoque se centra en la geometría del brazo y las limitaciones de sus ángulos articulares. 
+
 /* insertar imagen brazo RVIZ completamente recto, excepto articulación shoulder a 45º y hacer misma imagen que aparece en chef */
 
 #linebreak()
@@ -797,7 +798,7 @@ Para este cálculo, se extraen los ángulos obtenidos previamente y se ajustan s
 
   Es importante destacar que estos valores son aproximados y pueden ajustarse según las necesidades específicas de la tarea y la configuración del brazo robótico. 
 
-\ \ \
+#linebreak()
 
   Con ellos, se calcula la altura ajustada del  codo:  $ Z_a = (Z - Z_N) dot Z_f $ $ theta_"elbow" = theta_"elbow" + Z_a $
    Y se ajusta la posición de la muñeca para mantener la orientación y compensar esta diferencia entre el ángulo original y final del codo:
@@ -835,8 +836,8 @@ Ante ello, la solución adoptada ha sido emplear el plugin _libgazebo_link_attac
 #linebreak()
 La interfaz proporcionada gestiona las colisiones y los contactos entre el robot y los objetos, por medio de una llamada al servicio /ATTACHLINK y /DETACHLINK. Estos servicios úicamente requieren del model_name y link_name de ambos elementos a unir o separar, es decir, el robot y el objeto a manipular. El problema de esto ha recaído en que, pese a estar muy bien explicado en su repositorio, no se ha mostrado una vía clara para un sistema donde el objeto a manipular cambia dinámicamente, como es el caso de este proyecto. Es por ello que, tal como se explicó anteriormente en la @attach-detach, ha sido necesario implementar un sistema dinámico basado en la distancia entre los elementos implicados.
 
-/* Insertar imagen atach/detach */
-#figure(image("template\figures\detach.png", width: 100%), caption: [Lectura del terminal de Ubuntu. Representa la petición de detach al servicio, el cálculo de las distancias respecto la posición del gripper y los cubos; y la ejecución de la acción de detach, donde se puede mostrar el cubo azul cayendo desde la pinza.])
+#linebreak()
+#figure(image("template/figures/detach.png", width: 100%), caption: [Lectura del terminal de Ubuntu. Representa la petición de detach al servicio, el cálculo de las distancias respecto la posición del gripper y los cubos; y la ejecución de la acción de detach, donde se puede mostrar el cubo azul cayendo desde la pinza.])
 
 
 == Flujo de acción
