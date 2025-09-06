@@ -5,7 +5,7 @@
 
 #show: tfg_etsi_us_template.with(
   // El título del TFG
-  "Simulación de un sistema de Pick and Place con un robot Braccio Tinkerkit de Arduino bajo ROS 2",
+  "Simulación y puesta en marcha de un sistema de Pick and Place basado en visión artificial del robot Braccio Tinkerkit de Arduino controlado mediante ROS 2",
   // El grado de la titulación, e.g. Ingeniería Industrial
   "Ingeniería Electrónica, Robótica y Mecatrónica",
   // Nombre y apellidos del autor
@@ -376,8 +376,7 @@ La placa Arduino UNO es la base del sistema y encargada de la comunicación entr
 #linebreak()
 Tras comparar estas tres vertientes y en función de los objetivos formativos y profesionales planteados, la elección recomendada es ROS 2.
 El mayor problema del mismo recae en su complejidad, pues requiere de una mayor inversión inicial de tiempo para aprender sus herramientas y conceptos, así como de la instalación de un sistema operativo (Ubuntu) y los paquetes necesarios para su funcionamiento (ROS 2 Humble, Gazebo, RViz, MoveIt2, etc). 
-
-Sin embargo, aporta ventajas claras como su arquitectura descentralizada, un mejor soporte para requisitos de fiabilidad y tiempo real, integración con MoveIt2 y un ecosistema creciente orientado a la robótica profesional y de investigación.
+\ Sin embargo, aporta ventajas claras como su arquitectura descentralizada, un mejor soporte para requisitos de fiabilidad y tiempo real, integración con MoveIt2 y un ecosistema creciente orientado a la robótica profesional y de investigación.
 
 
 
@@ -462,11 +461,13 @@ El repositorio está diseñado para funcionar con dos modos, seleccionables en e
 
   Se han añadido dos nuevos paquetes principales:
 
-+ Braccio_gamepad_teleop: Permite el control del robot mediante un mando conectado mediante el puerto serie. Se ha implementado el mapeo de los botones y joysticks del mando a comandos específicos para mover las articulaciones del robot, tanto en simulación como en el hardware real, utilizando un mando de PlayStation 4 para las pruebas.
++ Braccio_gamepad_teleop: Permite el control del robot mediante un mando conectado a través del puerto serie. Se ha implementado el mapeo de los botones y joysticks del mando a comandos específicos para mover las articulaciones del robot, tanto en simulación como en el hardware real, utilizando un mando de PlayStation 4 para las pruebas.
 
 
 + Braccio_vision: Incluye los nodos y scripts necesarios para tareas de visión por computadora y control. En éste se abordan aspectos como la detección de objetos, calibración de cámaras y aplicaciones de "pick and place".
-#linebreak()
+
++ Sim-to-real: Contiene los scripts necesarios para la transferencia de la simulación a la realidad, permitiendo que los modelos y controladores desarrollados en Gazebo se apliquen al robot físico. Se nutre de la mayoría de scripts de visión y los complementa con adaptaciones específicas para el hardware.
+
 Estas implementaciones se tratarán en detalle en las siguientes secciones, explicando su diseño, integración con el sistema y los beneficios que aportan al proyecto global.
 
 
@@ -484,8 +485,6 @@ El robot manipulador Braccio se describe principalmente en la carpeta _braccio_d
 \
 \
 Adicionalmente, se encuentra _braccio.ros2_control.xacro_, quién apunta a _braccio_controllers.yml_, donde se especifican los controladores PID para cada articulación del robot, así como la configuración de los actuadores y sensores. 
-
-#linebreak()
 
 #figure(
   col2(
@@ -599,7 +598,7 @@ de un sistema de control basado en visión del manipulador real.
 
 
 = Percepción y localización de objetivos
-La percepción y detección de objetos es un componente elemental en el sistema de pick‑and‑place, ya que proporciona la información necesaria para que el robot identifique y localice los objetos a manipular sin necesidad de intervención humana directa, de forma automática. Ante ello, se ha investigado la metodología empleada por Will Stedden en su proyecto @chef, basado en un flujo de trabajo modular y reproducible. Sin embargo, debido al enfoque de calibración manual, se ha optado por la implementación de un sistema de calibración automática basado en homografía, similar al explicado por Nathan Naerts @aruco, donde se han utilizado arucos para delimitar el espacio de trabajo y la conversión de coordenadas. Sin embargo, en este caso, se ha optado por sustituir sus arucos por cubos rojos referenciales.
+La percepción y detección de objetos es un componente elemental en el sistema de pick‑and‑place, ya que proporciona la información necesaria para que el robot identifique y localice los objetos a manipular sin necesidad de intervención humana directa, de forma automática. Ante ello, se ha investigado la metodología empleada por Will Stedden en su proyecto @chef, basado en un flujo de trabajo modular y reproducible. Sin embargo, debido al enfoque de calibración manual, se ha optado por la implementación de un sistema de calibración automática basado en homografía, similar al explicado por Nathan Naerts @aruco, donde se han utilizado arucos para delimitar el espacio de trabajo y la conversión de coordenadas. No obstante, en este caso, se ha optado por sustituir sus arucos por cubos rojos referenciales.
 
 //#figure(align(image("template/figures/aruco.png", width: 70%), center), caption: [Imagen obtenida del vídeo explicativo de Nathan Naerts, donde implementa un sistema de calibración automática basada homografía utilizando arucos para delimitar el espacio de trabajo y la conversión de coordenadas. En él se observa el manipualdor, situado en una mesa de trabajo, agarrando un objeto situado en el interior del recinto; reconocido por el sistema de visión de la imagen inferior derecha @aruco.]) <fig-aruco>
 
@@ -710,7 +709,7 @@ El subsistema de detección de objetos tiene por objetivo localizar los cubos pr
 
  #linebreak() 
 
-#figure(align(image("template/figures/Test_hom.png", width: 100%), center), caption: [Lectura del terminal de Ubuntu tras la ejecución de _test_homography.py_. Representa los resultados de la validación de la matriz de homografía donde el error en la reproyección es muy bajo. Al comparar la posición real de un cubo adicional (0.35, 0.05) con la posición estimada mediante la matriz (0.3497, 0.04864) se observa un error de 1.38 mm, ámpliamente asumible para un robot manipulador.])
+#figure(align(image("template/figures/Test_hom.png", width: 100%), center), caption: [Lectura del terminal de Ubuntu tras la ejecución de _test_homography.py_. Representa los resultados de la validación de la matriz de homografía donde el error en la reproyección es muy bajo. Al comparar la posición real de un cubo adicional (0.35, 0.05) con la posición estimada mediante la matriz (0.3497, 0.04864) se observa un error de 1.38 mm, ámpliamente asumible para un robot manipulador.])<fig-test-hom>
 
 
 
@@ -870,15 +869,128 @@ En la @fig-demo se muestra la ejecución del sistema de pick-and-place para la r
 
 #figure(image("template/figures/demo.png", width: 125%), caption: [Lectura del terminal de Ubuntu. Representa la ejecución completa del sistema de pick-and-place, desde la detección del objeto green_cube1 hasta la finalización de la tarea, mostrando las posiciones calculadas y los estados del robot en cada paso del proceso. Al finalizar, detecta el cubo green_cube2 y repite el proceso hasta que no existan más elementos.])<fig-demo>
 
+/* Insertar imagenes de cómo alcanza cada posición */
 
 = Sim to real y validación
+El proceso de transferencia de un sistema desarrollado y probado en simulación a un entorno real, conocido como "sim to real", implica adaptar y validar el sistema para que funcione de manera efectiva en el mundo físico, enfrentándose a diversas dificultades y diferencias entre ambos entornos.
+Ante esto, ha sido necesario recrear el entorno simulado en la realidad y, posteriormente, aplicar técnicas de calibración y adaptación para el funcionamiento completo del sistema. 
+
+== Montaje robot físico
+El montaje del robot físico Braccio Tinkerkit se ha realizado siguiendo las instrucciones proporcionadas por el fabricante @braccio. El proceso ha implicado el ensamblaje de las diferentes partes del robot, incluyendo la base, los eslabones y las articulaciones, así como la instalación de los servomotores y la electrónica necesaria para su control.
+
+\ El proceso de montaje se encuentra cómodamente explicado en la documentación oficial del fabricante, donde además se incluye un vídeo explicativo que facilita la comprensión del proceso. Sin embargo, al tratarse de un robot de bajo presupuesto, se han detectado ciertas limitaciones en cuanto a la precisión y robustez del sistema.
+Las principales limitaciones recaen sobre la calidad del material empleado en la fabricación de las piezas, siendo principalmente plástico, el cual, al conectar las piezas mediante tornillos metálicos, puede experimentar deformaciones y holguras que afectan la precisión del robot. Como resultado, se han experimentado problemas con la adesión de los componentes plásticos en los ejes de los servomotores, que unido a la baja firmeza que ofrece la pinza, ha generado dificultades en la tarea de trayectoria y manipulación de objetos.
+
+// Insertar imagen robot montado al completo y pinza
+
+== Espacio de trabajo
+
+El espacio de trabajo del robot se ha definido en función de las dimensiones del entorno físico y de los objetos a manipular. Se ha optado por un área de trabajo rectangular, delimitada por las posiciones alcanzables del efector final del robot, obtenidas además de forma experimental en la simulación. 
+\ El entorno recreado consta de los siguientes elementos: 
+- Superficie de trabajo rectangular: se ha construido una plataforma plana y estable donde el robot pueda interactuar cómodamente con los elementos. Esta misma tiene un tamaño aproximado de 90 cm x 70 cm y contiene una serie de líneas paralelas y perpendiculares de unos 10 cm de ancho, que facilitan la calibración visual y la localización de los objetos.
+- Marcadores visuales: se han utilizado cubos de colores similares a los empleados en la simulación, con dimensiones aproximadas de 3cm. Estos elementos se han colocado de forma estratégica para barrer el área de trabajo y facilitar la calibración visual.
+- Objetos a manipular: se han dispuesto varios vasos de chupito de colores en el área de trabajo, los cuales serán utilizados en las pruebas de manipulación. La elección de estos objetos se ha realizado teniendo en cuenta su tamaño, forma y peso, asegurando que su recolección y manipulación sean factibles. Adicionalmente, se ha estudiado la posibilidad de utilizar otros objetos, como pelotas de ping pong.
+- Cámara cenital: se ha instalado un trípode unido a un teléfono móvil que simula la cámara cenital empleada en la simulación. Sin embargo, debido a las limitaciones del trípode y la cámara, la vista ofrecida no es completamente cenital. 
+
+/* Insertar imagen de todo un poco y una imagen más de los chupitos */
+
+
+== Calibraciones y ajustes
+Para asegurar un funcionamiento óptimo del sistema en el entorno real, se han llevado a cabo diversas calibraciones y ajustes, destacando las relacionadas con la visión.
+
+\ El dispositivo móvil empleado como cámara cenital se ha instalado en un trípode, asegurando una posición estable y una vista adecuada del área de trabajo, intentando siempre obtener lo más cercano posible a una vista cenital.
+La cámara se enlaza al sistema a través de una conexión Wi-Fi, permitiendo la transmisión de video en tiempo real mediante una aplicación específica, llamada Droidcam @droidcam.
+
+\ Tras su instalación y configuración, se ha procedido a crear un script, _webcam_publisher.py_, encargado de publicar la imagen en el mismo nodo que lo hacía la simulación, permitiendo así un acceso directo al detector de objetos de la información del entorno real.
+
+\ A continuación, se han modificado los umbrales de detección de objetos en el script, ajustando parámetros como el tamaño mínimo y máximo de los objetos a detectar, así como la colorimetría, pues en función de las condiciones de iluminación se ha observado que ciertos colores no son detectados correctamente.
+
+\ Finalmente se ha procedido a la calibración de la cámara mediante homografía, siguiendo el mismo procedimiento explicado en la sección correspondiente. Para ello, se han colocado 4 cubos rojos en posiciones conocidas dentro del entorno real y se han capturado sus centroides en píxeles mediante el sistema de detección de objetos. Sin embargo, al no tratarse de una vista completamente cenital, ha resultado en valores muy imprecisos. La solución propuesta ha sido la adición de más marcadores visuales, logrando una precisión aceptable para las tareas de pick-and-place previstas.
+
+/* Insertar tabla de posiciones */
+  #linebreak()
+  #figure(
+    table(
+      columns: ( 0.8fr, 0.8fr),
+      inset: 5pt,
+      align: horizon + center,
+      stroke: (x: 0.5pt, y: 0.75pt),
+    [*Posición real XY (m)*], [*Posición en píxeles XY (px)*],
+    [-0.325, -0.215], [115, 98], 
+    [0,-0.215],     [297,107],
+    [0.325, -0.215],     [497,113],
+    [-0.2, -0.1],    [180,165],
+    [0.2, -0.1],    [412,179],
+    [-0.325, 0.0],    [106,222],
+    [0.0, 0.0],    [288,233],
+    [0.325, 0.0],    [489,246],
+    [-0.2, 0.1],    [169,282],
+    [0.2, 0.1],   [406,301],
+    [-0.325, 0.215],    [97,344],
+    [0.0, 0.215],    [279,361],
+    [0.325, 0.215],   [461,381],
+
+    ),
+    caption: [Posiciones de los marcadores en el escenario creado y sus centroides capturados por la cámara del móvil en píxeles.]
+  )<fig-posiciones>
+
+/* Insertar imagen de los cubos todos detectados (quizas hacer col2) */
+
+\ Respecto a la calibración del brazo robótico, no ha sido necesario adaptar su configuración, puesto que el sistema de nodos, publicaciones y subscripciones se mantiene idéntico al de la simulación, permitiendo el movimiento del robot sin necesidad de ajustes adicionales.
+
+== Validación del sistema
+
+La validación del sistema se ha llevado a cabo mediante una serie de pruebas diseñadas para evaluar su desempeño en el entorno real. Estas pruebas han incluido la detección y manipulación de objetos en diferentes condiciones, así como la evaluación de la precisión.
+
+=== Visión
+\ Respecto al apartado de la visión se ha observado que, pese a los ajustes realizados, la detección de objetos sigue siendo un desafío debido a las variaciones en la iluminación, siendo el sistema capaz de discernir entre un vaso de chupito rojo y uno verde, pero mostrando dificultades en la detección de los tonos de rojo, provocadas por ejemplo por la sombra que proyecta el trípode en éstos. Adicionalmente, cabe destacar la dificultad para la obtención de los parámetros de la cámara debido a la imposibilidad de acceder a ellos en el dispositivo móvil.
+
+/* Detección de los 3 diferentes colores de vasos de chupito */
+
+=== Localización
+\ Enlazado con lo anterior, en cuanto a la localización de los objetos, el sistema ha mostrado un rendimiento aceptable, siendo capaz de identificar la posición de los vasos de chupito en el espacio tridimensional de forma relativamente precisa. Sin embargo, se han observado algunos errores de localización, causados por la propia imprecisión al crear la superficie de trabajo o la colocación manual de los marcadores de referencia.
+
+/* Insertar imagen de calculo de posicion real y estimada homografia */
+
+=== Trayectoria
+\ En lo que respecta a la trayectoria, el sistema ha encontrado limitaciones causados por los errores físicos producidos durante el montaje, unido a los errores explicados en las secciones anteriores. Como resultado, se han observado desviaciones en la trayectoria planificada, obteniendo un rendimiento más favorable cuando el control ha sido realizado mediante el mando a distancia.
+
+/* Insertar imagen del robot moviendose a dos puntos o Rviz + real */
+
+=== Manipulación
+\ En cuanto a la manipulación de objetos, el sistema ha demostrado ser efectivo en la recolección y colocación de los vasos de chupito. La garra permite una sujección mucho más firme de lo esperado, unido a la estructura ligera y compacta del vaso de plástico, conformando un proceso de recolección ágil y eficiente.
+Sin embargo, se han identificado algunas limitaciones en la precisión del agarre, causadas por la pobre amplitud de la garra cuando se encuentra abierta, siendo realmente tedioso recoger objetos de tamaño mediano. De igual forma, ha sido capaz de manipular objetos redondos como pelotas de ping pong, siempre y cuando se encuentren éstas en una superficie plana. 
+
+/* Insertar imagen de la garra manipulando chupito y pelotas de ping pong */
+
 = Conclusión
-// Huecos detectados y oportunidades para el TFG
+
+Este Trabajo de Fin de Grado se propuso bajo la finalidad de diseñar, simular y validar un sistema robótico de pick-and-place para el manipulador de bajo presupuesto Braccio Tinkerkit, utilizando el framework ROS 2. El propósito era claro y directo: crear una plataforma funcional y modular para la experimentación, que facilitara la adaptación al mundo real y, al mismo tiempo, adquirir competencias avanzadas en herramientas estándar de la industria robótica, como pueden ser ROS 2, Gazebo o GitHub.
+
+#linebreak()
+La contribución principal de este proyecto ha sido la integración de múltiples subsistemas en un flujo de trabajo coherente, desde la simulación a la validación real. Se desarrollaron paquetes específicos como _braccio_vision_, dedicado a la percepción por computador y el cálculo de la cinemática, _braccio_gamepad_teleop_ para el control manual o _sim-to-real_ para la adaptación al mundo real; demostrando la extensibilidad de la arquitectura base. 
+\ La metodología de percepción, que combina la detección de objetos por color con una calibración por homografía, proporcionó la precisión necesaria para la localización de objetos en el espacio de trabajo, como valida el bajo error de reproyección obtenido en la @fig-test-hom. Esta metodología, enlazada con las técnicas del cálculo de la cinemática inversa y la planificación de trayectorias mediante MoveIt2, permitió la ejecución autónoma de tareas de manipulación en el entorno simulado, como se observa en la @fig-demo.
+
+#linebreak()
+Uno de los desafíos técnicos más relevantes fue el cálculo de la cinemática inversa, que requirió la implementación de algoritmos específicos para determinar las posiciones articulares necesarias para alcanzar un objetivo en el espacio tridimensional. Esto implicó un profundo entendimiento de la geometría del manipulador y la capacidad de modelar su comportamiento de manera precisa, pues durante largos días se experimentó con diferentes enfoques, logrando incluso que la orientación fuera la correcta pero las posiciones articulares no coincidieran. Asimismo, tras superar ese obstáculo y descubrir la falta de un plugin nativo en ROS 2 para el agarre, casi rompo a llorar. Agradecer finalmente a la herramienta `libgazebo_link_attacher`@linkattacher, que junto con el desarrollo de una lógica de detección de proximidad, se consiguió gestionar dinámicamente la unión y separación de objetos, y solventar así la mayoría de mis problemas.
+/* Insertar imagenes fail de capturas que pueda tener */
+
+#linebreak()
+A nivel personal, este proyecto ha consolidado mi formación como ingeniero, forzándome a superar la curva de aprendizaje de ROS 2 y a afrontar la brecha entre la simulación ideal y las complejidades del hardware real, como las holguras mecánicas, la variabilidad del entorno y la precisión de los sensores.
+\ En simulación, el sistema demostró ser robusto, completando ciclos de manipulación de forma autónoma y predecible, como se ilustra en la @fig-demo. Sin embargo, la transferencia al robot físico evidenció las limitaciones de un hardware educativo: la baja rigidez de los componentes plásticos y la precisión de los servomotores, introducen desviaciones que no se observan en el modelo ideal. Asimismo, el sistema de visión es sensible a cambios de iluminación, lo que exige un entorno controlado el cual, adicionalmente, tiene un error humano añadido pues todas las variables que influyen no se pueden controlar.
+
+#linebreak()
+
+Como línea de trabajo futuro, se ha mejorado consideradamente la base ofrecida por Jaume Mulet @repo, implementando una estructura mucho más compleja y modular. Por ello, se proponen varias extensiones que pueden dar un salto de calidad al proyecto:
+\ En primer lugar destacaría la implementación de un sistema de detección de objetos mucho más robusto, basado en aprendizaje profundo, que permita la identificación de objetos en condiciones de iluminación variables y con mayor precisión. Esto podría lograrse mediante el entrenamiento de un modelo de red neuronal convolucional utilizando un conjunto de datos adecuado, ya sea entrenado previamente como Yolo, o bien un modelo personalizado adaptado a las necesidades específicas del entorno de trabajo.
+\ En segundo lugar, se podría explorar la integración de sensores adicionales, como cámaras RGB-D, cuyos parámetros intrínsecos se podrían calibrar de manera más precisa. Asimismo se podría diseñar un espacio de trabajo más profesional, donde la luz sea proveniente de diferentes focos, minimizando las sombras y reflejos y el trípode sea mucho más regulable y estable.
+\ Por último, se podría investigar la implementación de técnicas de aprendizaje por refuerzo para mejorar la planificación de trayectorias y la toma de decisiones en entornos dinámicos, donde existan multitud de obstáculos. Este caso se podría incluso extrapolar a un sistema conjunto tipo línea de trabajo, donde existan varios robots y cintas transportadoras encargadas de la manipulación de objetos.
 
 
+\ En definitiva, este TFG no solo ha producido un sistema funcional, sino que ha generado una plataforma de código abierto, documentada y modular. Todo el trabajo desarrollado se encuentra disponible en mi repositorio @my_repo, donde se incluyen instrucciones detalladas para su ejecución y vídeos que reflejen el funcionamiento del mismo. Se espera que ésta  pueda servir como una valiosa herramienta educativa para futuros estudiantes que deseen iniciarse en la robótica avanzada y para quienes quieran tomar las riendas de este proyecto, aplicando las implementaciones propuestas.
 
 
-
+/* Poner quizas alguna foto pero npi */
 
 
 
