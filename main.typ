@@ -1,5 +1,6 @@
 #import "template/lib.typ": tfg_etsi_us_template, pre-content, main-content, post-content, index,first-letter
 #let col2 = grid.with(columns: (0.5fr, 0.5fr), gutter: 5pt)
+#let col2_1 = grid.with(columns: (0.35fr, 0.7fr), gutter: 5pt)
 #let col3 = grid.with(columns: (0.5fr, 0.5fr, 0.5fr), gutter: 5pt)
 #set text(font: ("Times New Roman"))
 
@@ -865,23 +866,47 @@ El flujo de acción del sistema de pick-and-place se basa en la integración de 
 #figure(image("template/figures/flujo.png", width: 100%), caption: [Diagrama del flujo de acción del sistema de pick-and-place, mostrando la interacción entre los subsistemas de percepción, planificación y control.]) 
 
 #linebreak()
-En la @fig-demo se muestra la ejecución del sistema de pick-and-place para la recolección de un cubo, unificando todos los subsistemas y etapas del proceso explicadas.
+En la @fig-demo se muestra la ejecución del sistema de pick-and-place para la recolección de un cubo, unificando todos los subsistemas y etapas del proceso explicadas. En las siguientes, se detallan imágenes del proceso de ejecución del robot, mostrando las posiciones alcanzadas en cada etapa del proceso.
 
 #figure(image("template/figures/demo.png", width: 125%), caption: [Lectura del terminal de Ubuntu. Representa la ejecución completa del sistema de pick-and-place, desde la detección del objeto green_cube1 hasta la finalización de la tarea, mostrando las posiciones calculadas y los estados del robot en cada paso del proceso. Al finalizar, detecta el cubo green_cube2 y repite el proceso hasta que no existan más elementos.])<fig-demo>
 
-/* Insertar imagenes de cómo alcanza cada posición */
+
+  #col2(
+    figure(align(image("template/figures/1.png", width: 85%), center), caption: [Posición home.]),
+    figure(align(image("template/figures/2.png", width: 85%), center), caption: [Posición de aproximación.])
+  ),
+  #col2(
+    figure(align(image("template/figures/3.png", width: 85%), center), caption: [Posición de agarre. Gripper abierto]),
+    figure(align(image("template/figures/4.png", width: 85%), center), caption: [Posición de agarre. Gripper cerrado.])
+  ),
+  #col2(
+    figure(align(image("template/figures/5.png", width: 85%), center), caption: [Posición de aproximación con objeto.]),
+    figure(align(image("template/figures/6.png", width: 85%), center), caption: [Posición depósito con objeto. Gripper cerrado.])
+  ),
+  #col2(
+    figure(align(image("template/figures/7.png", width: 85%), center), caption: [Posición depósito sin objeto. Gripper abierto.]),
+    figure(align(image("template/figures/8.png", width: 85%), center), caption: [Retorno a posición home.])
+  ),
+
+
 
 = Sim to real y validación
 El proceso de transferencia de un sistema desarrollado y probado en simulación a un entorno real, conocido como "sim to real", implica adaptar y validar el sistema para que funcione de manera efectiva en el mundo físico, enfrentándose a diversas dificultades y diferencias entre ambos entornos.
 Ante esto, ha sido necesario recrear el entorno simulado en la realidad y, posteriormente, aplicar técnicas de calibración y adaptación para el funcionamiento completo del sistema. 
 
 == Montaje robot físico
-El montaje del robot físico Braccio Tinkerkit se ha realizado siguiendo las instrucciones proporcionadas por el fabricante @braccio. El proceso ha implicado el ensamblaje de las diferentes partes del robot, incluyendo la base, los eslabones y las articulaciones, así como la instalación de los servomotores y la electrónica necesaria para su control.
+El montaje del robot físico Braccio Tinkerkit se ha realizado siguiendo las instrucciones proporcionadas por el fabricante @braccio. El proceso ha implicado el ensamblaje de las diferentes partes del robot, incluyendo la base, los eslabones y las articulaciones, así como la instalación de los servomotores y la electrónica necesaria para su control. Durante el mismo, se ha seguido un tutorial en vídeo disponible en Youtube que facilita la comprensión del proceso. 
 
-\ El proceso de montaje se encuentra cómodamente explicado en la documentación oficial del fabricante, donde además se incluye un vídeo explicativo que facilita la comprensión del proceso. Sin embargo, al tratarse de un robot de bajo presupuesto, se han detectado ciertas limitaciones en cuanto a la precisión y robustez del sistema.
-Las principales limitaciones recaen sobre la calidad del material empleado en la fabricación de las piezas, siendo principalmente plástico, el cual, al conectar las piezas mediante tornillos metálicos, puede experimentar deformaciones y holguras que afectan la precisión del robot. Como resultado, se han experimentado problemas con la adesión de los componentes plásticos en los ejes de los servomotores, que unido a la baja firmeza que ofrece la pinza, ha generado dificultades en la tarea de trayectoria y manipulación de objetos.
+\ Sin embargo, al tratarse de un robot de bajo presupuesto, se han detectado ciertas limitaciones en cuanto a la precisión y robustez del sistema.
+Las principales limitaciones recaen sobre la calidad del material empleado en la fabricación de las piezas, siendo principalmente plástico, el cual, al estar conectadas dichas piezas mediante tornillos metálicos, puede experimentar deformaciones y holguras que afectan la precisión del robot. Como resultado, pese a que a primera vista no se noten desperfectos en la @fig-montaje, se han experimentado problemas con la adesión de los componentes plásticos en los ejes de los servomotores, que unido a la baja firmeza que ofrece la pinza, ha generado dificultades en la tarea de trayectoria y manipulación de objetos.
 
-// Insertar imagen robot montado al completo y pinza
+\ Para mitigar estos problemas, se han realizado ajustes y mejoras en el montaje, como el refuerzo de ciertas uniones con adhesivos y la sustitución de piezas defectuosas. Además, se ha llevado a cabo un mantenimiento regular del robot para asegurar su correcto funcionamiento y prolongar su vida útil.
+
+#linebreak()
+  #figure(col2(
+    align(image("template/figures/montaje1.jpg", width: 65%), center), 
+    align(image("template/figures/montaje2.jpg", width: 65%), center), 
+  ), caption: [Imágenes finales del montaje del robot Braccio Tinkerkit, mostrando su estructura completa y una visión detallada de la estructura de la pinza.])<fig-montaje>
 
 == Espacio de trabajo
 
@@ -907,17 +932,18 @@ La cámara se enlaza al sistema a través de una conexión Wi-Fi, permitiendo la
 
 \ Finalmente se ha procedido a la calibración de la cámara mediante homografía, siguiendo el mismo procedimiento explicado en la sección correspondiente. Para ello, se han colocado 4 cubos rojos en posiciones conocidas dentro del entorno real y se han capturado sus centroides en píxeles mediante el sistema de detección de objetos. Sin embargo, al no tratarse de una vista completamente cenital, ha resultado en valores muy imprecisos. La solución propuesta ha sido la adición de más marcadores visuales, logrando una precisión aceptable para las tareas de pick-and-place previstas.
 
-/* Insertar tabla de posiciones */
-  #linebreak()
-  #figure(
+
+#linebreak()
+#figure(
+  col2_1(
     table(
-      columns: ( 0.8fr, 0.8fr),
+      columns: ( 0.5fr, 0.5fr),
       inset: 5pt,
-      align: horizon + center,
+      align: center,
       stroke: (x: 0.5pt, y: 0.75pt),
-    [*Posición real XY (m)*], [*Posición en píxeles XY (px)*],
+    [*Posición XY (m)*], [*Posición XY (px)*],
     [-0.325, -0.215], [115, 98], 
-    [0,-0.215],     [297,107],
+    [0.0,-0.215],     [297,107],
     [0.325, -0.215],     [497,113],
     [-0.2, -0.1],    [180,165],
     [0.2, -0.1],    [412,179],
@@ -929,12 +955,12 @@ La cámara se enlaza al sistema a través de una conexión Wi-Fi, permitiendo la
     [-0.325, 0.215],    [97,344],
     [0.0, 0.215],    [279,361],
     [0.325, 0.215],   [461,381],
-
     ),
-    caption: [Posiciones de los marcadores en el escenario creado y sus centroides capturados por la cámara del móvil en píxeles.]
-  )<fig-posiciones>
+    align(image("template/figures/detect.png", width: 105%), center)
+  ),
+  caption: [Posiciones de los marcadores en el escenario creado y sus centroides capturados por la cámara del móvil en píxeles, junto con la detección de los marcadores en el entorno real. Tal como se observa, los píxeles de la tabla y la imagen coinciden, al igual que las posiciones en metros. Sin embargo, estas últimas están señaladas en el cartón con bolígrafo, por lo que no se llegan a distinguir perfectamente en la imagen.]
+)
 
-/* Insertar imagen de los cubos todos detectados (quizas hacer col2) */
 
 \ Respecto a la calibración del brazo robótico, no ha sido necesario adaptar su configuración, puesto que el sistema de nodos, publicaciones y subscripciones se mantiene idéntico al de la simulación, permitiendo el movimiento del robot sin necesidad de ajustes adicionales.
 
@@ -972,15 +998,16 @@ La contribución principal de este proyecto ha sido la integración de múltiple
 \ La metodología de percepción, que combina la detección de objetos por color con una calibración por homografía, proporcionó la precisión necesaria para la localización de objetos en el espacio de trabajo, como valida el bajo error de reproyección obtenido en la @fig-test-hom. Esta metodología, enlazada con las técnicas del cálculo de la cinemática inversa y la planificación de trayectorias mediante MoveIt2, permitió la ejecución autónoma de tareas de manipulación en el entorno simulado, como se observa en la @fig-demo.
 
 #linebreak()
-Uno de los desafíos técnicos más relevantes fue el cálculo de la cinemática inversa, que requirió la implementación de algoritmos específicos para determinar las posiciones articulares necesarias para alcanzar un objetivo en el espacio tridimensional. Esto implicó un profundo entendimiento de la geometría del manipulador y la capacidad de modelar su comportamiento de manera precisa, pues durante largos días se experimentó con diferentes enfoques, logrando incluso que la orientación fuera la correcta pero las posiciones articulares no coincidieran. Asimismo, tras superar ese obstáculo y descubrir la falta de un plugin nativo en ROS 2 para el agarre, casi rompo a llorar. Agradecer finalmente a la herramienta `libgazebo_link_attacher`@linkattacher, que junto con el desarrollo de una lógica de detección de proximidad, se consiguió gestionar dinámicamente la unión y separación de objetos, y solventar así la mayoría de mis problemas.
-/* Insertar imagenes fail de capturas que pueda tener */
+Uno de los desafíos técnicos más relevantes fue el cálculo de la cinemática inversa, que requirió la implementación de algoritmos específicos para determinar las posiciones articulares necesarias para alcanzar un objetivo en el espacio tridimensional. Esto implicó un profundo entendimiento de la geometría del manipulador y la capacidad de modelar su comportamiento de manera precisa, pues durante largos días se experimentó con diferentes enfoques, logrando incluso que la orientación fuera la correcta pero las posiciones articulares no coincidieran como en la @fig-fail. Asimismo, tras superar ese obstáculo y descubrir la falta de un plugin nativo en ROS 2 para el agarre, casi rompo a llorar. Agradecer finalmente a la herramienta _libgazebo_link_attacher_@linkattacher, que junto con el desarrollo de una lógica de detección de proximidad, se consiguió gestionar dinámicamente la unión y separación de objetos, y solventar así la mayoría de mis problemas.
+
+#figure(image("template/figures/fail.png", width: 48%), caption: [Fallo en la colocación del brazo robótico para la recolección del cubo verde. En esta imagen se puede observar la discrepancia entre la posición del cubo y la del brazo, compartiendo orientación pero no ubicación del efector final.])<fig-fail>
+
 
 #linebreak()
 A nivel personal, este proyecto ha consolidado mi formación como ingeniero, forzándome a superar la curva de aprendizaje de ROS 2 y a afrontar la brecha entre la simulación ideal y las complejidades del hardware real, como las holguras mecánicas, la variabilidad del entorno y la precisión de los sensores.
 \ En simulación, el sistema demostró ser robusto, completando ciclos de manipulación de forma autónoma y predecible, como se ilustra en la @fig-demo. Sin embargo, la transferencia al robot físico evidenció las limitaciones de un hardware educativo: la baja rigidez de los componentes plásticos y la precisión de los servomotores, introducen desviaciones que no se observan en el modelo ideal. Asimismo, el sistema de visión es sensible a cambios de iluminación, lo que exige un entorno controlado el cual, adicionalmente, tiene un error humano añadido pues todas las variables que influyen no se pueden controlar.
 
 #linebreak()
-
 Como línea de trabajo futuro, se ha mejorado consideradamente la base ofrecida por Jaume Mulet @repo, implementando una estructura mucho más compleja y modular. Por ello, se proponen varias extensiones que pueden dar un salto de calidad al proyecto:
 \ En primer lugar destacaría la implementación de un sistema de detección de objetos mucho más robusto, basado en aprendizaje profundo, que permita la identificación de objetos en condiciones de iluminación variables y con mayor precisión. Esto podría lograrse mediante el entrenamiento de un modelo de red neuronal convolucional utilizando un conjunto de datos adecuado, ya sea entrenado previamente como Yolo, o bien un modelo personalizado adaptado a las necesidades específicas del entorno de trabajo.
 \ En segundo lugar, se podría explorar la integración de sensores adicionales, como cámaras RGB-D, cuyos parámetros intrínsecos se podrían calibrar de manera más precisa. Asimismo se podría diseñar un espacio de trabajo más profesional, donde la luz sea proveniente de diferentes focos, minimizando las sombras y reflejos y el trípode sea mucho más regulable y estable.
