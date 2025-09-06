@@ -6,7 +6,7 @@
 
 #show: tfg_etsi_us_template.with(
   // El título del TFG
-  "Simulación y puesta en marcha de un sistema de Pick and Place basado en visión artificial del robot Braccio Tinkerkit de Arduino controlado mediante ROS 2",
+  "Simulación y puesta en marcha de un sistema de Pick and Place basado en visión por computador del robot Braccio Tinkerkit de Arduino, controlado mediante el framework ROS 2 Humble",
   // El grado de la titulación, e.g. Ingeniería Industrial
   "Ingeniería Electrónica, Robótica y Mecatrónica",
   // Nombre y apellidos del autor
@@ -38,7 +38,6 @@
   Una ingeniería es un camino largo y muy complicado. Cómo no agradecer a todos aquellos compañeros, amigos, que me llevo de este viaje y que han hecho de la universidad un hogar, un lugar mucho más ameno donde las risas y los buenos momentos han sido la tónica dominante incluso en las largas sesiones de estudio. Sin duda, me llevo un pedacito de cada uno de vosotros.
 \ \
   #linebreak()
-  
   Finalmente, agradecer a todas aquellas personas que, de una forma u otra, han aportado su granito de arena para que este proyecto haya sido posible. Desde aquellos maestros que me enseñaron las bases de la tecnología, matemáticas y física en el instituto, hasta la propia universidad de Sevilla por darme la oportunidad de formarme y crecer como persona y ahora, como ingeniero.
   
 \ \ \
@@ -50,12 +49,25 @@
   #pagebreak(to: "odd")
 
   = Resumen
-  #lorem(100)
+  
+  Este Trabajo de Fin de Grado diseña, simula y valida un sistema de pick‑and‑place de bajo coste con el manipulador educativo Braccio Tinkerkit, controlado por Arduino y coordinado en ROS 2 Humble. Se parte de un repositorio modular al que se incorporan paquetes propios para la teleoperación con gamepad, percepción y calibración y transferencia al entorno real. En simulación, el entorno integra Gazebo, MoveIt2 y RViz2, con una cámara cenital y objetos cúbicos. La percepción aplica segmentación por color, extracción de centroides y una calibración por homografía para convertir píxeles a coordenadas del mundo. La planificación se basa en una cinemática inversa específica del Braccio (con manejo de simetrías y alturas) y en la ejecución de trayectorias con ros2_control; el agarre se simula mediante el plugin gazebo_link_attacher.
+
+
+  \ La fase sim‑to‑real replica el escenario con una cámara de un teléfono móvil, enlazada al ordenador mediante DroidCam; y marcadores adicionales, reajustando umbrales de visión. Los resultados muestran una ejecución impecable en simulación y un desempeño aceptable en el robot real, limitado por la rigidez del hardware, la apertura de la pinza y la sensibilidad a la iluminación, entre otros factores. El proyecto entrega un repositorio abierto, documentado y extensible para docencia e investigación, con utilidades de prueba y configuración reproducible, dedicado a la comunidad de ROS 2 y robótica educativa.
+
+
+
+
+  
   #pagebreak(to: "odd")
 
 
   = Abstract
-  #lorem(100)
+  
+  This Final Degree Project designs, simulates, and validates a low‑cost pick‑and‑place system using the educational Braccio Tinkerkit manipulator, controlled by Arduino and coordinated in ROS 2 Humble. It builds on a modular repository augmented with custom packages for gamepad teleoperation, perception and calibration, and transfer to the real setup. In simulation, the stack integrates Gazebo, MoveIt2, and RViz2, with an overhead camera and cubic objects. The perception pipeline applies color segmentation, centroid extraction, and a homography based calibration to convert pixel data into world coordinates. Motion planning is based on a custom inverse kinematics solution for the Braccio arm (handling symmetries and height adjustments) and trajectory execution via ros2_control; grasping is simulated with the gazebo_link_attacher plugin.
+
+  \ The sim-to-real phase replicates the setup using a mobile phone camera linked to the computer via DroidCam, requiring additional markers and recalibration of vision thresholds. Results show flawless execution in simulation and acceptable performance on the real robot, limited by hardware rigidity, gripper aperture, and lighting sensitivity, among other factors. The project provides an open, documented, and extensible repository for education and research, with test utilities and reproducible configuration, dedicated to the ROS 2 and educational robotics community.
+
   #pagebreak(to: "odd")
 
   /* Ejemplo de uso de Índices personalizados
