@@ -917,8 +917,8 @@ El espacio de trabajo del robot se ha definido en función de las dimensiones de
 - Objetos a manipular: se han dispuesto varios vasos de chupito de colores en el área de trabajo, los cuales serán utilizados en las pruebas de manipulación. La elección de estos objetos se ha realizado teniendo en cuenta su tamaño, forma y peso, asegurando que su recolección y manipulación sean factibles. Adicionalmente, se ha estudiado la posibilidad de utilizar otros objetos, como pelotas de ping pong.
 - Cámara cenital: se ha instalado un trípode unido a un teléfono móvil que simula la cámara cenital empleada en la simulación. Sin embargo, debido a las limitaciones del trípode y la cámara, la vista ofrecida no es completamente cenital. 
 
-/* Insertar imagen de todo un poco y una imagen más de los chupitos */
-
+#linebreak()
+#figure(align(image("template/figures/entorno.jpg", width: 63%), center), caption: [Imagen del entorno físico recreado para las pruebas del sistema, mostrando la superficie de trabajo con los marcadores visuales, los vasos y el manipulador en el centro del área de trabajo. Junto a éstos, se observa el trípode con el teléfono móvil simulando la cámara cenital.])
 
 == Calibraciones y ajustes
 Para asegurar un funcionamiento óptimo del sistema en el entorno real, se han llevado a cabo diversas calibraciones y ajustes, destacando las relacionadas con la visión.
@@ -969,25 +969,39 @@ La cámara se enlaza al sistema a través de una conexión Wi-Fi, permitiendo la
 La validación del sistema se ha llevado a cabo mediante una serie de pruebas diseñadas para evaluar su desempeño en el entorno real. Estas pruebas han incluido la detección y manipulación de objetos en diferentes condiciones, así como la evaluación de la precisión.
 
 === Visión
-\ Respecto al apartado de la visión se ha observado que, pese a los ajustes realizados, la detección de objetos sigue siendo un desafío debido a las variaciones en la iluminación, siendo el sistema capaz de discernir entre un vaso de chupito rojo y uno verde, pero mostrando dificultades en la detección de los tonos de rojo, provocadas por ejemplo por la sombra que proyecta el trípode en éstos. Adicionalmente, cabe destacar la dificultad para la obtención de los parámetros de la cámara debido a la imposibilidad de acceder a ellos en el dispositivo móvil.
+Respecto al apartado de la visión se ha observado que, pese a los ajustes realizados, la detección de objetos sigue siendo un desafío debido a las variaciones en la iluminación, siendo el sistema capaz de discernir entre un vaso de chupito rojo y uno verde, pero mostrando dificultades en la detección de los tonos de rojo, provocadas por ejemplo por la sombra que proyecta el trípode en éstos. Adicionalmente, cabe destacar la dificultad para la obtención de los parámetros de la cámara debido a la imposibilidad de acceder a ellos en el dispositivo móvil.
 
-/* Detección de los 3 diferentes colores de vasos de chupito */
+
+#linebreak()
+  #figure(col2(
+    align(image("template/figures/chupito.png", width: 100%), center), 
+    align(image("template/figures/vasos.jpg", width: 97%), center), 
+  ), caption: [Imágenes de los vasos de chupito empleados en las pruebas de manipulación, mostrando la variedad de colores y la dificultad que presenta el sistema de visión para su detección. Durante la detección se puede observar los problemas causados por la perspectiva de la cámara y las variaciones en la iluminación, que afectan a la precisión del sistema para calcular el centroide y clasificar los objetos presentes.])
+
+
 
 === Localización
-\ Enlazado con lo anterior, en cuanto a la localización de los objetos, el sistema ha mostrado un rendimiento aceptable, siendo capaz de identificar la posición de los vasos de chupito en el espacio tridimensional de forma relativamente precisa. Sin embargo, se han observado algunos errores de localización, causados por la propia imprecisión al crear la superficie de trabajo o la colocación manual de los marcadores de referencia.
+Enlazado con lo anterior, en cuanto a la localización de los objetos, el sistema ha mostrado un rendimiento aceptable, siendo capaz de identificar la posición de los vasos de chupito en el espacio tridimensional de forma relativamente precisa. Sin embargo, se han observado algunos errores de localización, causados por la propia imprecisión al crear la superficie de trabajo o la colocación manual de los marcadores de referencia.
 
-/* Insertar imagen de calculo de posicion real y estimada homografia */
+#linebreak()
+#figure(image("template/figures/hom_real.png", width: 85%), caption: [Lectura del terminal de Ubuntu. Representa el cálculo de la homografía en el entorno real, mostrando los puntos en píxeles y metros de un objeto seleccionado al azar, junto con la matriz de homografía obtenida y el error de reproyección final, superior al obtenido en simulación pero aún aceptable para las tareas previstas.])
+
 
 === Trayectoria
-\ En lo que respecta a la trayectoria, el sistema ha encontrado limitaciones causados por los errores físicos producidos durante el montaje, unido a los errores explicados en las secciones anteriores. Como resultado, se han observado desviaciones en la trayectoria planificada, obteniendo un rendimiento más favorable cuando el control ha sido realizado mediante el mando a distancia.
+En lo que respecta a la trayectoria, el sistema ha encontrado limitaciones causados por los errores físicos producidos durante el montaje, unido a los errores explicados en las secciones anteriores. Como resultado, se han observado desviaciones en la trayectoria planificada, obteniendo un rendimiento más favorable cuando el control ha sido realizado mediante el mando a distancia.
 
-/* Insertar imagen del robot moviendose a dos puntos o Rviz + real */
+  #figure(col2(
+    align(image("template/figures/pos1.jpg", width: 65%), center), 
+    align(image("template/figures/pos2.jpg", width: 65%), center), 
+  ), caption: [Imágenes del robot Braccio Tinkerkit en diferentes posiciones alcanzadas durante las pruebas de recolección en el entorno real, mostrando la capacidad del sistema para posicionarse y recoger objetos en el espacio de trabajo.]) <fig-trayectoria>
+
 
 === Manipulación
-\ En cuanto a la manipulación de objetos, el sistema ha demostrado ser efectivo en la recolección y colocación de los vasos de chupito. La garra permite una sujección mucho más firme de lo esperado, unido a la estructura ligera y compacta del vaso de plástico, conformando un proceso de recolección ágil y eficiente.
+En cuanto a la manipulación de objetos, el sistema ha demostrado ser efectivo en la recolección y colocación de los vasos de chupito. La garra permite una sujección mucho más firme de lo esperado, unido a la estructura ligera y compacta del vaso de plástico, conformando un proceso de recolección ágil y eficiente.
 Sin embargo, se han identificado algunas limitaciones en la precisión del agarre, causadas por la pobre amplitud de la garra cuando se encuentra abierta, siendo realmente tedioso recoger objetos de tamaño mediano. De igual forma, ha sido capaz de manipular objetos redondos como pelotas de ping pong, siempre y cuando se encuentren éstas en una superficie plana. 
 
-/* Insertar imagen de la garra manipulando chupito y pelotas de ping pong */
+  #figure(align(image("template/figures/coge_chupito.jpg", width: 35%), center), caption: [Imagen del robot Braccio Tinkerkit recogiendo un vaso de chupito en el entorno real, demostrando la capacidad del sistema para realizar tareas de agarre de objetos con éxito. En la @fig-trayectoria se puede observar también el éxito durante la recolección de una pelota de ping pong]) <fig-manipulación>
+
 
 = Conclusión
 
@@ -1005,19 +1019,20 @@ Uno de los desafíos técnicos más relevantes fue el cálculo de la cinemática
 
 #linebreak()
 A nivel personal, este proyecto ha consolidado mi formación como ingeniero, forzándome a superar la curva de aprendizaje de ROS 2 y a afrontar la brecha entre la simulación ideal y las complejidades del hardware real, como las holguras mecánicas, la variabilidad del entorno y la precisión de los sensores.
-\ En simulación, el sistema demostró ser robusto, completando ciclos de manipulación de forma autónoma y predecible, como se ilustra en la @fig-demo. Sin embargo, la transferencia al robot físico evidenció las limitaciones de un hardware educativo: la baja rigidez de los componentes plásticos y la precisión de los servomotores, introducen desviaciones que no se observan en el modelo ideal. Asimismo, el sistema de visión es sensible a cambios de iluminación, lo que exige un entorno controlado el cual, adicionalmente, tiene un error humano añadido pues todas las variables que influyen no se pueden controlar.
+\ En simulación, el sistema demostró ser robusto, completando ciclos de manipulación de forma autónoma. Sin embargo, la transferencia al robot físico evidenció las limitaciones de un hardware educativo: la baja rigidez de los componentes plásticos y la precisión de los servomotores, introducen desviaciones que no se observan en el modelo ideal. Asimismo, el sistema de visión es sensible a cambios de iluminación, lo que exige un entorno controlado el cual, adicionalmente, tiene un error humano añadido pues todas las variables que influyen no se pueden controlar.
 
 #linebreak()
 Como línea de trabajo futuro, se ha mejorado consideradamente la base ofrecida por Jaume Mulet @repo, implementando una estructura mucho más compleja y modular. Por ello, se proponen varias extensiones que pueden dar un salto de calidad al proyecto:
+
 \ En primer lugar destacaría la implementación de un sistema de detección de objetos mucho más robusto, basado en aprendizaje profundo, que permita la identificación de objetos en condiciones de iluminación variables y con mayor precisión. Esto podría lograrse mediante el entrenamiento de un modelo de red neuronal convolucional utilizando un conjunto de datos adecuado, ya sea entrenado previamente como Yolo, o bien un modelo personalizado adaptado a las necesidades específicas del entorno de trabajo.
-\ En segundo lugar, se podría explorar la integración de sensores adicionales, como cámaras RGB-D, cuyos parámetros intrínsecos se podrían calibrar de manera más precisa. Asimismo se podría diseñar un espacio de trabajo más profesional, donde la luz sea proveniente de diferentes focos, minimizando las sombras y reflejos y el trípode sea mucho más regulable y estable.
-\ Por último, se podría investigar la implementación de técnicas de aprendizaje por refuerzo para mejorar la planificación de trayectorias y la toma de decisiones en entornos dinámicos, donde existan multitud de obstáculos. Este caso se podría incluso extrapolar a un sistema conjunto tipo línea de trabajo, donde existan varios robots y cintas transportadoras encargadas de la manipulación de objetos.
+
+\ En segundo lugar, se podría explorar la integración de sensores adicionales, como cámaras RGB-D, cuyos parámetros intrínsecos se podrían calibrar de manera más precisa. Esta mejora permitiría diseñar un espacio de trabajo más profesional, donde la luz sea proveniente de diferentes focos, minimizando las sombras y reflejos; donde el trípode sea mucho más regulable y estable.
+
+\ Por último, se podría investigar la implementación de técnicas de aprendizaje por refuerzo para mejorar la planificación de trayectorias y la toma de decisiones en entornos dinámicos, donde existan multitud de obstáculos. Este caso se podría incluso extrapolar a un sistema mayor, como una línea de producción, donde existan varios robots y cintas transportadoras encargadas de la manipulación de objetos.
 
 
-\ En definitiva, este TFG no solo ha producido un sistema funcional, sino que ha generado una plataforma de código abierto, documentada y modular. Todo el trabajo desarrollado se encuentra disponible en mi repositorio @my_repo, donde se incluyen instrucciones detalladas para su ejecución y vídeos que reflejen el funcionamiento del mismo. Se espera que ésta  pueda servir como una valiosa herramienta educativa para futuros estudiantes que deseen iniciarse en la robótica avanzada y para quienes quieran tomar las riendas de este proyecto, aplicando las implementaciones propuestas.
+\ En definitiva, este TFG no solo ha producido un sistema funcional, sino que ha generado una plataforma de código abierto, documentada y modular. Todo el trabajo desarrollado se encuentra disponible en mi repositorio @my_repo, donde se incluyen instrucciones detalladas para su ejecución y vídeos que reflejan el funcionamiento del mismo. Se espera que éste pueda servir como una valiosa herramienta educativa para futuros estudiantes que deseen iniciarse en la robótica avanzada y para quienes quieran tomar las riendas de este proyecto, aplicando las implementaciones propuestas.
 
-
-/* Poner quizas alguna foto pero npi */
 
 
 
