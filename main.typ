@@ -1,12 +1,12 @@
 #import "template/lib.typ": tfg_etsi_us_template, pre-content, main-content, post-content, index,first-letter
 #let col2 = grid.with(columns: (0.5fr, 0.5fr), gutter: 5pt)
 #let col2_1 = grid.with(columns: (0.35fr, 0.7fr), gutter: 5pt)
-#let col3 = grid.with(columns: (0.5fr, 0.5fr, 0.5fr), gutter: 5pt)
+#let col3 = grid.with(columns: (0.5fr, 0.5fr, 0.5fr), gutter: 2pt)
 #set text(font: ("Times New Roman"))
 
 #show: tfg_etsi_us_template.with(
   // El título del TFG
-  "Simulación y puesta en marcha de un sistema de Pick and Place basado en visión por computador del robot Braccio Tinkerkit de Arduino, controlado mediante el framework ROS 2 Humble",
+  "Sistema Pick and Place para el robot Braccio Tinkerkit de Arduino bajo ROS 2",
   // El grado de la titulación, e.g. Ingeniería Industrial
   "Ingeniería Electrónica, Robótica y Mecatrónica",
   // Nombre y apellidos del autor
@@ -86,7 +86,7 @@
   // comenzando desde 1. Usado para el contenido principal del TFG
   = Introducción
   #first-letter[
-    El presente documento titulado "_Simulación de un sistema de Pick and Place con un robot Braccio Tinkerkit de Arduino bajo ROS 2_" es el trabajo presentado para superar el Trabajo de Fin de Grado del Grado de Ingeniería Electrónica, Robótica y Mecatrónica.
+    El presente documento titulado "_Sistema Pick and Place para el robot Braccio Tinkerkit de Arduino bajo ROS 2_" es el trabajo presentado para superar el Trabajo de Fin de Grado del Grado de Ingeniería Electrónica, Robótica y Mecatrónica.
   ]
   
   El consiguiente aborda la simulación y validación de un sistema de recolección, clasificación y colocación de elementos, basado en el kit educativo Braccio Tinkerkit, controlado por una placa Arduino UNO y coordinado desde ROS 2 Humble. 
@@ -189,10 +189,10 @@ En la actualidad, la presencia de robots industriales en el mercado está en con
 Este incremento en la aplicación robótica se traduce en una oportunidad de mercado para aprender y desarrollar nuevas soluciones en el ámbito de la automatización y la robótica. En concreto, la versatilidad y funcionalidad que ofrecen los robots articulares, comúnmente llamados `brazos robóticos` ha impulsado a miles de estudiantes y profesionales del sector a contribuir en el desarrollo. Gracias a ello, se ha dado lugar a la creación de nuevas plataformas donde los usuarios pueden colaborar y compartir sus experiencias, enriqueciendo aún más el aprendizaje y la innovación en este campo.
 
 #linebreak()
-#figure(col3(align(image("template/figures/a1.png", width: 108%,), left), align(image("template/figures/a2.png", width: 80%), center), align(image("template/figures/a3.png", width: 120%), center)), caption: [Proyectos compartidos por la comunidad de Autodesk Instructables, donde se explica mediante tutoriales y documentación cómo construir brazos robóticos @instructables.])
+#figure(col3(align(image("template/figures/a1.png", width: 98%,), right), align(image("template/figures/a2.png", width: 78%), center), align(image("template/figures/a3.png", width: 101%), center)), caption: [Proyectos compartidos por la comunidad de Autodesk Instructables, donde se explica mediante tutoriales y documentación cómo construir brazos robóticos @instructables.])
 
 #linebreak()
-#figure(col3(align(image("template/figures/b1.png", width: 120%,), center), align(image("template/figures/b3.png", width: 80%), ), align(image("template/figures/b2.png", width: 90%), left)), caption: [Proyectos compartidos por la comunidad de Arduino Project Hub, donde se explica mediante tutoriales y documentación la construcción y control de brazos robóticos mediante Arduino @project_hub.])
+#figure(col3(align(image("template/figures/b1.png", width: 98%,), center), align(image("template/figures/b3.png", width: 78%),center), align(image("template/figures/b2.png", width: 101%), center)), caption: [Proyectos compartidos por la comunidad de Arduino Project Hub, donde se explica mediante tutoriales y documentación la construcción y control de brazos robóticos mediante Arduino @project_hub.])
 
 #linebreak()
 Con la proliferación de estas plataformas y la creciente demanda de soluciones robóticas, se ha generado un ecosistema vibrante y colaborativo que impulsa la innovación y el desarrollo en el campo de la robótica. Estas alternativas manuales también han servido como base para el desarrollo de kits educativos y plataformas de bajo coste, que permiten a estudiantes y entusiastas aprender sobre robótica y automatización de manera accesible y práctica, como el Braccio Tinkerkit de Arduino.
@@ -531,7 +531,7 @@ Adicionalmente, se encuentra _braccio.ros2_control.xacro_, quién apunta a _brac
 )<fig-spawn>
 
 
-= Control mediante PS4 controller
+= Control mediante mando de PS4
 El sistema actual propone la implementación de un sistema de control basado en la retroalimentación visual, utilizando la cámara simulada para ajustar dinámicamente los comandos de movimiento del robot.
 Sin embargo, previa a ésta, se ha optado por un sistema de control manual mediante un mando de PS4, con el objetivo de familiarizarse con el entorno y realizar las pruebas pertinentes que verifiquen el correcto funcionamiento del mismo. 
 En la carpeta _braccio_gamepad_teleop_ se encuentra el nodo principal encargado de esta tarea, _gamepad_teleop.py_, y un launch que arranca el sistema.
@@ -884,25 +884,25 @@ En la @fig-demo se muestra la ejecución del sistema de pick-and-place para la r
 
 
   #col2(
-    figure(align(image("template/figures/1.png", width: 85%), center), caption: [Posición home.]),
-    figure(align(image("template/figures/2.png", width: 85%), center), caption: [Posición de aproximación.])
-  ),
+    figure(align(image("template/figures/1.png", width: 88%), center), caption: [Posición home.]),
+    figure(align(image("template/figures/2.png", width: 88%), center), caption: [Posición de aproximación.])
+  )
   #col2(
-    figure(align(image("template/figures/3.png", width: 85%), center), caption: [Posición de agarre. Gripper abierto]),
-    figure(align(image("template/figures/4.png", width: 85%), center), caption: [Posición de agarre. Gripper cerrado.])
-  ),
+    figure(align(image("template/figures/3.png", width: 88%), center), caption: [Posición de agarre. Gripper abierto]),
+    figure(align(image("template/figures/4.png", width: 88%), center), caption: [Posición de agarre. Gripper cerrado.])
+  )
   #col2(
-    figure(align(image("template/figures/5.png", width: 85%), center), caption: [Posición de aproximación con objeto.]),
-    figure(align(image("template/figures/6.png", width: 85%), center), caption: [Posición depósito con objeto. Gripper cerrado.])
-  ),
+    figure(align(image("template/figures/5.png", width: 88%), center), caption: [Posición de aproximación con objeto.]),
+    figure(align(image("template/figures/6.png", width: 88%), center), caption: [Posición depósito con objeto. Gripper cerrado.])
+  )
   #col2(
-    figure(align(image("template/figures/7.png", width: 85%), center), caption: [Posición depósito sin objeto. Gripper abierto.]),
-    figure(align(image("template/figures/8.png", width: 85%), center), caption: [Retorno a posición home.])
-  ),
+    figure(align(image("template/figures/7.png", width: 88%), center), caption: [Posición depósito sin objeto. Gripper abierto.]),
+    figure(align(image("template/figures/8.png", width: 88%), center), caption: [Retorno a posición home.])
+  )
 
 
 
-= Sim to real y validación
+= Integración con robot real y validación
 El proceso de transferencia de un sistema desarrollado y probado en simulación a un entorno real, conocido como "sim to real", implica adaptar y validar el sistema para que funcione de manera efectiva en el mundo físico, enfrentándose a diversas dificultades y diferencias entre ambos entornos.
 Ante esto, ha sido necesario recrear el entorno simulado en la realidad y, posteriormente, aplicar técnicas de calibración y adaptación para el funcionamiento completo del sistema. 
 
@@ -926,7 +926,7 @@ El espacio de trabajo del robot se ha definido en función de las dimensiones de
 \ El entorno recreado consta de los siguientes elementos: 
 - Superficie de trabajo rectangular: se ha construido una plataforma plana y estable donde el robot pueda interactuar cómodamente con los elementos. Esta misma tiene un tamaño aproximado de 90 cm x 70 cm y contiene una serie de líneas paralelas y perpendiculares de unos 10 cm de ancho, que facilitan la calibración visual y la localización de los objetos.
 - Marcadores visuales: se han utilizado cubos de colores similares a los empleados en la simulación, con dimensiones aproximadas de 3cm. Estos elementos se han colocado de forma estratégica para barrer el área de trabajo y facilitar la calibración visual.
-- Objetos a manipular: se han dispuesto varios vasos de chupito de colores en el área de trabajo, los cuales serán utilizados en las pruebas de manipulación. La elección de estos objetos se ha realizado teniendo en cuenta su tamaño, forma y peso, asegurando que su recolección y manipulación sean factibles. Adicionalmente, se ha estudiado la posibilidad de utilizar otros objetos, como pelotas de ping pong.
+- Objetos a manipular: se han dispuesto varios vasos de colores en el área de trabajo, los cuales serán utilizados en las pruebas de manipulación. La elección de estos objetos se ha realizado teniendo en cuenta su tamaño, forma y peso, asegurando que su recolección y manipulación sean factibles. Adicionalmente, se ha estudiado la posibilidad de utilizar otros objetos, como pelotas de ping pong.
 - Cámara cenital: se ha instalado un trípode unido a un teléfono móvil que simula la cámara cenital empleada en la simulación. Sin embargo, debido a las limitaciones del trípode y la cámara, la vista ofrecida no es completamente cenital. 
 
 #linebreak()
@@ -981,7 +981,7 @@ La cámara se enlaza al sistema a través de una conexión Wi-Fi, permitiendo la
 La validación del sistema se ha llevado a cabo mediante una serie de pruebas diseñadas para evaluar su desempeño en el entorno real. Estas pruebas han incluido la detección y manipulación de objetos en diferentes condiciones, así como la evaluación de la precisión.
 
 === Visión
-Respecto al apartado de la visión se ha observado que, pese a los ajustes realizados, la detección de objetos sigue siendo un desafío debido a las variaciones en la iluminación, siendo el sistema capaz de discernir entre un vaso de chupito rojo y uno verde, pero mostrando dificultades en la detección de los tonos de rojo, provocadas por ejemplo por la sombra que proyecta el trípode en éstos. Adicionalmente, cabe destacar la dificultad para la obtención de los parámetros de la cámara debido a la imposibilidad de acceder a ellos en el dispositivo móvil.
+Respecto al apartado de la visión se ha observado que, pese a los ajustes realizados, la detección de objetos sigue siendo un desafío debido a las variaciones en la iluminación, siendo el sistema capaz de discernir entre un vaso rojo y uno verde, pero mostrando dificultades en la detección de los tonos de rojo, provocadas por ejemplo por la sombra que proyecta el trípode en éstos. Adicionalmente, cabe destacar la dificultad para la obtención de los parámetros de la cámara debido a la imposibilidad de acceder a ellos en el dispositivo móvil.
 
 
 #linebreak()
@@ -1009,29 +1009,32 @@ En lo que respecta a la trayectoria, el sistema ha encontrado limitaciones causa
 
 
 === Manipulación
-En cuanto a la manipulación de objetos, el sistema ha demostrado ser efectivo en la recolección y colocación de los vasos de chupito. La garra permite una sujección mucho más firme de lo esperado, unido a la estructura ligera y compacta del vaso de plástico, conformando un proceso de recolección ágil y eficiente.
-Sin embargo, se han identificado algunas limitaciones en la precisión del agarre, causadas por la pobre amplitud de la garra cuando se encuentra abierta, siendo realmente tedioso recoger objetos de tamaño mediano. De igual forma, ha sido capaz de manipular objetos redondos como pelotas de ping pong, siempre y cuando se encuentren éstas en una superficie plana. 
+En cuanto a la manipulación de objetos, el sistema ha demostrado ser efectivo en la recolección y colocación de los vasos ubicados en el entorno. La garra permite una sujección mucho más firme de lo esperado, unido a la estructura ligera y compacta del recipiente de plástico, conformando un proceso de recolección ágil y eficiente.
+Sin embargo, se han identificado algunas limitaciones en la precisión del agarre, causadas por la pobre amplitud de la garra cuando se encuentra abierta, siendo realmente tedioso recoger objetos de tamaño mediano. 
+\ En la @fig-manipulación se pueden observar las habilidades de la garra para recoger uno de los vasos detectado anteriormente, mostrando también solvencia para manipular objetos redondos como las pelotas de ping pong mostradas en la @fig-trayectoria, siempre y cuando se encuentren éstas en una superficie plana.
 
-  #figure(align(image("template/figures/coge_chupito.jpg", width: 35%), center), caption: [Imagen del robot Braccio Tinkerkit recogiendo un vaso de chupito en el entorno real, demostrando la capacidad del sistema para realizar tareas de agarre de objetos con éxito. En la @fig-trayectoria se puede observar también el éxito durante la recolección de una pelota de ping pong]) <fig-manipulación>
+  #figure(align(image("template/figures/coge_chupito.jpg", width: 35%), center), caption: [Imagen del robot Braccio Tinkerkit recogiendo un vaso de chupito en el entorno real, demostrando la capacidad del sistema para realizar tareas de agarre de objetos con éxito.]) <fig-manipulación>
 
 
-= Conclusión
+= Conclusiones y trabajos futuros
 
 Este Trabajo de Fin de Grado se propuso bajo la finalidad de diseñar, simular y validar un sistema robótico de pick-and-place para el manipulador de bajo presupuesto Braccio Tinkerkit, utilizando el framework ROS 2. El propósito era claro y directo: crear una plataforma funcional y modular para la experimentación, que facilitara la adaptación al mundo real y, al mismo tiempo, adquirir competencias avanzadas en herramientas estándar de la industria robótica, como pueden ser ROS 2, Gazebo o GitHub.
 
 #linebreak()
-La contribución principal de este proyecto ha sido la integración de múltiples subsistemas en un flujo de trabajo coherente, desde la simulación a la validación real. Se desarrollaron paquetes específicos como _braccio_vision_, dedicado a la percepción por computador y el cálculo de la cinemática, _braccio_gamepad_teleop_ para el control manual o _sim-to-real_ para la adaptación al mundo real; demostrando la extensibilidad de la arquitectura base. 
-\ La metodología de percepción, que combina la detección de objetos por color con una calibración por homografía, proporcionó la precisión necesaria para la localización de objetos en el espacio de trabajo, como valida el bajo error de reproyección obtenido en la @fig-test-hom. Esta metodología, enlazada con las técnicas del cálculo de la cinemática inversa y la planificación de trayectorias mediante MoveIt2, permitió la ejecución autónoma de tareas de manipulación en el entorno simulado, como se observa en la @fig-demo.
+La contribución principal de este proyecto ha sido la integración de múltiples subsistemas en un flujo de trabajo coherente, desde la simulación a la validación real. Durante este proceso, se han desarrollado paquetes específicos como _braccio_vision_, dedicado a la percepción por computador y el cálculo de la cinemática, _braccio_gamepad_teleop_ para el control manual o _sim-to-real_ para la adaptación al mundo real; demostrando la extensibilidad de la arquitectura base. 
+
+\ La metodología de percepción, que combina la detección de objetos por color con una calibración por homografía, proporcionó la precisión necesaria para la localización de objetos en el espacio de trabajo, tal como se valida el bajo error de reproyección obtenido en el test de la @fig-test-hom. Esta metodología, enlazada con las técnicas del cálculo de la cinemática inversa y la planificación de trayectorias mediante MoveIt2, permitió la ejecución autónoma de tareas de manipulación en el entorno simulado, como se observa en la @fig-demo y posteriores.
 
 #linebreak()
-Uno de los desafíos técnicos más relevantes fue el cálculo de la cinemática inversa, que requirió la implementación de algoritmos específicos para determinar las posiciones articulares necesarias para alcanzar un objetivo en el espacio tridimensional. Esto implicó un profundo entendimiento de la geometría del manipulador y la capacidad de modelar su comportamiento de manera precisa, pues durante largos días se experimentó con diferentes enfoques, logrando incluso que la orientación fuera la correcta pero las posiciones articulares no coincidieran como en la @fig-fail. Asimismo, tras superar ese obstáculo y descubrir la falta de un plugin nativo en ROS 2 para el agarre, casi rompo a llorar. Agradecer finalmente a la herramienta _libgazebo_link_attacher_@linkattacher, que junto con el desarrollo de una lógica de detección de proximidad, se consiguió gestionar dinámicamente la unión y separación de objetos, y solventar así la mayoría de mis problemas.
+Uno de los desafíos técnicos más relevantes fue el cálculo de la cinemática inversa, que requirió la implementación de algoritmos específicos para determinar las posiciones articulares necesarias para alcanzar un objetivo en el espacio tridimensional. Esto implicó un profundo entendimiento de la geometría del manipulador y la capacidad de modelar su comportamiento de manera precisa, pues durante largos días se experimentó con diferentes enfoques, logrando incluso que la orientación fuera la correcta pero las posiciones articulares no coincidieran, como se muestra en la @fig-fail. Asimismo, superar el obstáculo y verificar la falta de un plugin nativo de agarre en ROS 2 derivó en un cambio anímico significativo, pasando de la satisfacción inicial a una notable frustración. Agradecer finalmente a la herramienta _libgazebo_link_attacher_@linkattacher, que junto con el desarrollo de una lógica de detección de proximidad, se consiguió gestionar dinámicamente la unión y separación de objetos, y solventar así la gran mayoría de problemas encontrados.
 
-#figure(image("template/figures/fail.png", width: 48%), caption: [Fallo en la colocación del brazo robótico para la recolección del cubo verde. En esta imagen se puede observar la discrepancia entre la posición del cubo y la del brazo, compartiendo orientación pero no ubicación del efector final.])<fig-fail>
+#figure(image("template/figures/fail.png", width: 41%), caption: [Error durante la colocación del brazo robótico para la recolección del cubo verde. En esta imagen se puede observar la discrepancia entre la posición del cubo y la del brazo, compartiendo orientación pero no ubicación del efector final.])<fig-fail>
 
 
 #linebreak()
 A nivel personal, este proyecto ha consolidado mi formación como ingeniero, forzándome a superar la curva de aprendizaje de ROS 2 y a afrontar la brecha entre la simulación ideal y las complejidades del hardware real, como las holguras mecánicas, la variabilidad del entorno y la precisión de los sensores.
-\ En simulación, el sistema demostró ser robusto, completando ciclos de manipulación de forma autónoma. Sin embargo, la transferencia al robot físico evidenció las limitaciones de un hardware educativo: la baja rigidez de los componentes plásticos y la precisión de los servomotores, introducen desviaciones que no se observan en el modelo ideal. Asimismo, el sistema de visión es sensible a cambios de iluminación, lo que exige un entorno controlado el cual, adicionalmente, tiene un error humano añadido pues todas las variables que influyen no se pueden controlar.
+
+\ En simulación, el sistema demostró ser robusto, completando ciclos de manipulación de forma autónoma. Sin embargo, la transferencia al robot físico evidenció las limitaciones de un hardware educativo: la baja rigidez de los componentes plásticos y la precisión de los servomotores introducen desviaciones que no se observan en el modelo ideal. De igual forma, el sistema de visión es sensible a cambios de iluminación, lo que exige un entorno controlado donde, adicionalmente, se añade un error humano debido a la imposibilidad de controlar todas las variables que influyen.
 
 #linebreak()
 Como línea de trabajo futuro, se ha mejorado consideradamente la base ofrecida por Jaume Mulet @repo, implementando una estructura mucho más compleja y modular. Por ello, se proponen varias extensiones que pueden dar un salto de calidad al proyecto:
