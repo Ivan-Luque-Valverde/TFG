@@ -29,7 +29,7 @@
   // definidos no están numerados. Usado para índice, agradecimientos,
   // introducción, abstracto/resumen, ...
   = Agradecimientos
-  En primer lugar, quiero expresar mi más sincero agradecimiento a mi familia, mis padres y hermano que no han dudado nunca de mí y me han apoyado incondicionalmente en cada paso de mi vida académica y personal. Sin ese empujón para luchar por aquello que deseaba desde pequeño, no estaría aquí hoy.
+  En primer lugar, quiero expresar mi más sincero agradecimiento a mi familia, mis padres y hermano que no han dudado nunca de mí y me han apoyado incondicionalmente en cada paso de mi vida académica y personal. Sin ese empujón para luchar por aquello que deseaba desde pequeño, no estaría hoy aquí.
 \ \
 #linebreak()
   A continuación, me gustaría agradecer a mi tutor, Federico Cuesta Rojo, por abrirme las puertas a embarcarme en este proyecto increíble que enlaza la robótica manipuladora con la percepción y control. Gracias por su orientación, experiencia y apoyo a lo largo de este proyecto. 
@@ -49,11 +49,11 @@
   #pagebreak(to: "odd")
 
   = Resumen
-  
-  Este Trabajo de Fin de Grado diseña, simula y valida un sistema de pick‑and‑place de bajo coste con el manipulador educativo Braccio Tinkerkit, controlado por Arduino y coordinado en ROS 2 Humble. Se parte de un repositorio modular al que se incorporan paquetes propios para la teleoperación con gamepad, percepción y calibración y transferencia al entorno real. En simulación, el entorno integra Gazebo, MoveIt2 y RViz2, con una cámara cenital y objetos cúbicos. La percepción aplica segmentación por color, extracción de centroides y una calibración por homografía para convertir píxeles a coordenadas del mundo. La planificación se basa en una cinemática inversa específica del Braccio (con manejo de simetrías y alturas) y en la ejecución de trayectorias con ros2_control; el agarre se simula mediante el plugin gazebo_link_attacher.
+
+  Este Trabajo de Fin de Grado diseña, simula y valida un sistema de pick‑and‑place de bajo coste con el manipulador educativo Braccio Tinkerkit, controlado por Arduino y coordinado en ROS 2 Humble. Se parte de un repositorio modular al que se incorporan paquetes propios para la teleoperación con gamepad, percepción y calibración y transferencia al entorno real. En simulación, el entorno integra Gazebo, MoveIt2 y RViz2, con una cámara cenital y objetos cúbicos. La percepción aplica segmentación por color, extracción de centroides y una calibración por homografía para convertir píxeles a coordenadas del mundo. La planificación se basa en una cinemática inversa específica del Braccio (con manejo de simetrías y alturas) y en la ejecución de trayectorias con ros2_control; el agarre se simula mediante el plugin gazebo_link_attacher.so, desarrollado por la Universidad de Cranfield.
 
 
-  \ La fase sim‑to‑real replica el escenario con una cámara de un teléfono móvil, enlazada al ordenador mediante DroidCam; y marcadores adicionales, reajustando umbrales de visión. Los resultados muestran una ejecución impecable en simulación y un desempeño aceptable en el robot real, limitado por la rigidez del hardware, la apertura de la pinza y la sensibilidad a la iluminación, entre otros factores. El proyecto entrega un repositorio abierto, documentado y extensible para docencia e investigación, con utilidades de prueba y configuración reproducible, dedicado a la comunidad de ROS 2 y robótica educativa.
+  \ La fase sim‑to‑real replica el escenario con una cámara de un teléfono móvil, enlazada al ordenador mediante DroidCam; y marcadores adicionales, reajustando umbrales de visión. Los resultados muestran una ejecución impecable en simulación y un desempeño aceptable en el robot real, limitado por la rigidez del hardware, la apertura de la pinza y la sensibilidad a la iluminación, entre otros factores. El proyecto entrega un repositorio abierto, documentado y extensible para docencia e investigación, con utilidades de prueba y configuración reproducible, dedicado a la comunidad de ROS 2 y a la robótica educativa.
 
 
 
@@ -98,22 +98,22 @@
 Este proyecto nace como una combinación de motivos personales, formativos y profesionales.
 \
 \
-Desde un punto de vista personal, siempre he tenido un gran interés por la robótica y la automatización, fascinado por cómo las máquinas pueden interactuar con el mundo físico y realizar tareas complejas. Desde bien pequeño recuerdo el entusiasmo al desenvolver un regalo y descubrir un kit de construcción como el mostrado en la @fig-meccano, otorgándome horas innumerables de diversión y aprendizaje mientras ensamblaba y la enorme satisfacción al comprobar que, tras todo ese esfuerzo, había construido un robot que funcionaba. Finalmente, esos pequeños kits de construcciones, laboratorios o electrónica, fueron construyendo mi pasión por la robótica y la tecnología.
+Desde un punto de vista personal, siempre he tenido un gran interés por la robótica y la automatización, fascinado por cómo las máquinas pueden interactuar con el mundo físico y realizar tareas complejas. Desde bien pequeño recuerdo el entusiasmo al desenvolver un regalo y descubrir un kit de construcción como el mostrado en la @fig-meccano, otorgándome  innumerables horas de diversión y aprendizaje mientras ensamblaba y la enorme satisfacción al comprobar que, tras todo ese esfuerzo, había construido un robot que funcionaba. Finalmente, esos pequeños kits de construcciones, laboratorios o electrónica, fueron construyendo mi pasión por la robótica y la tecnología.
 \
 \
-Desde un punto de vista formativo, este proyecto representa una oportunidad para aplicar y consolidar los conocimientos adquiridos a lo largo de la carrera, especialmente en áreas como la programación, la robótica y la percepción. Trabajar durante la asignatura _Laboratorio de Robótica_ con un robot ABB IRB 120 despertó mi entusiasmo por este tipo de robots manipuladores, enlazado con los conocimientos adquiridos durante las asignaturas _Sistemas de Percepción_ y _Ampliación de Robótica_ constituyeron la oportunidad ideal para unificar estos conocimientos bajo el mismo proyecto. 
+Desde un punto de vista formativo, este proyecto representa una oportunidad para aplicar y consolidar los conocimientos adquiridos a lo largo de la carrera, especialmente en áreas como la programación, la robótica y la percepción. Trabajar durante la asignatura _Laboratorio de Robótica_ con un robot ABB IRB 120 despertó mi entusiasmo por este tipo de robots manipuladores, enlazado con las competencias técnicas adquiridas durante las asignaturas _Sistemas de Percepción_ y _Ampliación de Robótica_, constituyeron la oportunidad ideal para unificar estos fundamentos bajo el mismo proyecto.
 
-#figure(image("template/figures/mecano.jpg", width: 50%), caption: [Juguete para niños, kit de construcción de un vehículo todo-terreno Meccano]) <fig-meccano>
+#figure(image("template/figures/mecano.jpg", width: 50%), caption: [Juguete para niños, kit de construcción de un vehículo todo-terreno Meccano.]) <fig-meccano>
 
-Finalmente, desde un punto de vista profesional, la experiencia adquirida en este proyecto será un valioso activo en mi futura carrera. La entrada en un ecosistema como ROS 2, apenas explorado durante la carrera, representa una oportunidad para adquirir habilidades demandadas en el mercado laboral tales como la búsqueda e implementación de repositorios o el manejo de un sistema de nodos y publicaciones. La robótica es un campo en constante evolución y crecimiento, y contar con experiencia práctica en el desarrollo de sistemas robóticos me posicionará favorablemente en el mercado laboral.
+Finalmente, desde un punto de vista profesional, la experiencia adquirida en este proyecto será un valioso activo en mi trayectoria. La entrada en un ecosistema como ROS 2, apenas explorado durante el grado, representa una oportunidad para adquirir habilidades demandadas en el mercado laboral tales como la búsqueda e implementación de repositorios o el manejo de un complejo sistema de nodos y publicaciones. La robótica es un campo en constante evolución y crecimiento, y contar con experiencia práctica en el desarrollo de sistemas robóticos me posicionará favorablemente en el mercado laboral.
 
   == Objetivos del Trabajo
 
-Este trabajo tiene como objetivo principal el diseño y desarrollo de un sistema de simulación para un robot manipulador, utilizando el kit Braccio Tinkerkit y ROS 2. Se busca crear un entorno virtual que permita la experimentación y validación de algoritmos de control y percepción, facilitando la transferencia de estos al robot físico.
+Este trabajo tiene como objetivo principal el diseño y desarrollo de un sistema de simulación para un robot manipulador, utilizando el kit Braccio Tinkerkit y ROS 2. Se enfatiza en la creación de un entorno virtual que permita la experimentación y validación de algoritmos de control y percepción, facilitando la transferencia de estos al robot físico.
 \
 \
-De forma complementaria, se pretende establecer un flujo de trabajo que integre la simulación con el robot físico, permitiendo la validación de los algoritmos en un entorno real. Esto incluye la creación de un repositorio completamente modular donde la adición de nuevos elementos se realice de forma sencilla e intuitiva, asegurando la escalabilidad y flexibilidad de ambos sistemas. 
-Para ello, en primer lugar, se ha seleccionado un repositorio existente en GitHub como base inicial y funcional para el desarrollo del sistema @repo. A continuación, se ha modelado hacia el objetivo deseado, adaptando y ampliando las funcionalidades del repositorio original con nuevas características referenciadas en otros repositorios. Finalmente, se ha implementado y probado el sistema tanto en simulación como en el robot físico, evaluando su rendimiento y realizando ajustes según sea necesario.
+De forma complementaria, se pretende establecer un flujo de trabajo que integre la simulación con el robot físico, permitiendo la validación de los algoritmos en un entorno real. Esto incluye la creación de un repositorio completamente modular donde la adición de nuevos elementos se realice de forma sencilla e intuitiva, asegurando la escalabilidad y flexibilidad del sistema. 
+Para ello, en primer lugar, se ha seleccionado un repositorio existente en GitHub como base inicial y funcional para el desarrollo del proyecto @repo. A continuación, se ha modelado hacia el objetivo deseado, adaptando y ampliando las funcionalidades del repositorio original con nuevas características referenciadas en otros repositorios. Finalmente, se ha implementado y probado el sistema tanto en simulación como en el robot físico, evaluando su rendimiento y realizando ajustes según sea necesario.
 = Estado del arte
 
   == Introducción a la robótica
@@ -129,11 +129,11 @@ Para ello, en primer lugar, se ha seleccionado un repositorio existente en GitHu
   De forma similar al descrito en la obra teatral, en un principio, los robots fueron concebidos como herramientas para sustituir a los humanos en tareas específicas debido a peligrosidad, precisión o repetitividad. Este hecho, unido con el auge de otros campos como la electrónica y la informática, ha permitido el desarrollo de robots cada vez más sofisticados y capaces de realizar tareas complejas, siendo éstos prácticamentente indispensables en la automatización industrial moderna.
 
   #linebreak()
-#figure(image("template/figures/Capek.jpg", width: 70%), caption: [Representación original de la obra teatral de Karel Čapek, donde se observan un hombre junto a una mujer y tres robots.]) 
+#figure(image("template/figures/Capek.jpg", width: 70%), caption: [Representación original de la obra teatral de Karel Čapek, donde se observa un hombre junto a una mujer y tres robots.]) 
 
 
   == Tipos de robots
-  Los robots son máquinas programables capaces de realizar tareas de forma autónoma o semiautónoma. Según la norma ISO (International Organization for Standardization) 8373 @iso, se clasifican en tres grandes grupos en función de su uso. Los robots industriales son robots necesarios en tareas de automatización industrial, los de servicio realizan tareas útiles para las personas o los equipos; y los médicos están destinados a ser utilizados como equipo electromédico o sistema electromédico.
+  Los robots son máquinas programables capaces de realizar tareas de forma autónoma o semiautónoma. Según la norma ISO (International Organization for Standardization) 8373 @iso, se clasifican en tres grandes grupos en función de su uso. Los robots industriales son robots necesarios en tareas de automatización industrial, los de servicio realizan tareas útiles para las personas o los equipos; y los médicos están destinados a ser utilizados como equipo o sistema electromédico.
 
   === Robots industriales
 La ISO define un robot industrial como un manipulador multipropósito reprogramable, controlado automáticamente, programable en tres o más ejes, que puede estar fijo en un lugar o fijado a una plataforma móvil para su uso en aplicaciones de automatización en un entorno industrial. 
@@ -174,7 +174,7 @@ Esta institución distingue dos categorías de robots de servicio:
 #figure(image("template/figures/service.png", width: 80%), caption: [Representación gráfica del número de productores de robots de servicio por grupo de aplicación y origen en 2024 @ifr_conference .])<fig-service>
 
 === Robots médicos
-Los robots médicos constituyen ahora una tercera área de aplicación, catagorizándose anteriormente como una categoría especializada de robots de servicio. Sin embargo, tal como se documenta en este reportaje constituido por varias organizaciones sanitarias de Polonia @medical, su definición aún se muestra un poco confusa si se considera la ofertada por la ISO.
+Los robots médicos constituyen ahora una tercera área de aplicación, clasificados anteriormente como una categoría especializada de robots de servicio. Sin embargo, tal como se documenta en este reportaje constituido por varias organizaciones sanitarias de Polonia @medical, su definición aún se muestra un poco confusa si se considera la ofertada por la ISO.
 
 #linebreak()
 Pese a eso, basándose en la definición oficial, los robots médicos están diseñados para asistir en la atención médica y quirúrgica, pudiendo realizar tareas como la cirugía asistida, la rehabilitación de pacientes y la entrega de suministros médicos. Su uso en entornos clínicos requiere un alto grado de precisión y fiabilidad, así como la capacidad de interactuar de manera segura con pacientes y profesionales de la salud.
@@ -186,7 +186,7 @@ En la actualidad, la presencia de robots industriales en el mercado está en con
 #figure(image("template/figures/upgrade_rob.png", width: 80%), caption: [Representación gráfica del crecimiento en la cantidad de robots industriales operando en el mercado durante los últimos 10 años según World Robotics en 2024 @ifr_conference.])<fig-upgrade>
 
 #linebreak()
-Este incremento en la aplicación robótica se traduce en una oportunidad de mercado para aprender y desarrollar nuevas soluciones en el ámbito de la automatización y la robótica. En concreto, la versatilidad y funcionalidad que ofrecen los robots articulares, comúnmente llamados `brazos robóticos` ha impulsado a miles de estudiantes y profesionales del sector a contribuir en el desarrollo. Gracias a ello, se ha dado lugar a la creación de nuevas plataformas donde los usuarios pueden colaborar y compartir sus experiencias, enriqueciendo aún más el aprendizaje y la innovación en este campo.
+Este incremento en la aplicación robótica se traduce en una oportunidad de mercado para aprender y desarrollar nuevas soluciones en el ámbito de la automatización y la robótica. En concreto, la versatilidad y funcionalidad que ofrecen los robots articulares, comúnmente llamados "brazos robóticos", ha impulsado a miles de estudiantes y profesionales del sector a contribuir en el desarrollo. Gracias a ello, se ha dado lugar a la creación de nuevas plataformas donde los usuarios pueden colaborar y compartir sus experiencias, enriqueciendo aún más el aprendizaje y la innovación en este campo.
 
 #linebreak()
 #figure(col3(align(image("template/figures/a1.png", width: 98%,), right), align(image("template/figures/a2.png", width: 78%), center), align(image("template/figures/a3.png", width: 101%), center)), caption: [Proyectos compartidos por la comunidad de Autodesk Instructables, donde se explica mediante tutoriales y documentación cómo construir brazos robóticos @instructables.])
@@ -199,11 +199,11 @@ Con la proliferación de estas plataformas y la creciente demanda de soluciones 
 
 #pagebreak()
   == Braccio Tinkerkit
-  El Braccio Tinkerkit es un manipulador educativo de sobremesa diseñado para aprendizaje, prototipado y experimentación con control de robots manipuladores a bajo coste. Este kit de montaje ofrece una introducción versátil a la robótica, la mecánica y la electrónica, permitiendo a los usuarios ensamblar y programar el brazo para una variedad de tareas, como la manipulación de objetos, programación de trayectorias o control de articulaciones.
+  El Braccio Tinkerkit es un manipulador educativo de sobremesa diseñado para el aprendizaje, prototipado y experimentación con control de robots manipuladores de bajo presupuesto. Este kit de montaje ofrece una introducción versátil a la robótica, la mecánica y la electrónica, permitiendo a los usuarios ensamblar y programar el brazo para una variedad de tareas, como la manipulación de objetos, programación de trayectorias o control de articulaciones.
 
   #linebreak()
   Destaca por su flexibilidad y enfoque educativo, constando de las siguientes características:
-  - Control por Arduino: Se integra perfectamente con el ecosistema de Arduino, lo que facilita su programación y control. Pese a que esta placa no se encuentre incluida en el kit, existen ofertas donde se incluye la placa junto con el kit a un precio competitivo.
+  - Control por Arduino: Se integra perfectamente con el ecosistema de Arduino, lo que facilita su programación y control. Pese a que esta placa no se encuentre incluida en el kit oficial, existen ofertas donde se venden ambos en conjunto a un precio competitivo.
   - Múltiples Ejes de Movimiento: El brazo robótico cuenta con seis ejes controlados por servomotores, lo que le confiere una gran amplitud de movimiento y precisión. 
   - Diseño Versátil: Puede ser ensamblado de diversas maneras para realizar distintas funciones. Además de la pinza incluida, se le pueden acoplar otros elementos como una cámara, un teléfono o incluso un panel solar para seguir el movimiento del sol.
   - Kit de Montaje completo: el kit incluye la estructura mecánica del brazo, un conjunto de servomotores de tipo hobby que actúan como actuadores para cada articulación, una pinza/gripper simple, la electrónica de control basada en una placa Arduino y el cableado y tornillería necesarios para su montaje.
@@ -242,12 +242,12 @@ La estructura del robot se compone por:
 - Una articulación "codo", la cual enlaza dos piezas semiidénticas: "brazo" y "antebrazo".
 - Una articulación "muñeca vertical", que une "antebrazo" con una pequeña pieza que contiene la estructura de la pinza.
 - Una articulación "muñeca rotatoria", donde se acopla la pinza permitiendo una rotación sobre un eje en dirección de la garra.
-- La pinza o "gripper" encargada de la sujeción de objetos, cuyos valores toman 10 grados cuando está completamente abierta y de 73 grados cuando se encuentra cerrada.
+- La pinza o "gripper" encargada de la sujeción de objetos, cuyos valores toman 10 grados cuando está completamente abierta y 73 grados cuando se encuentra cerrada.
 ], left),
  figure(image("template/figures/braccio.png", width: 100%), caption: [Estructura del Braccio Tinkerkit.]))
 
  #linebreak()
- El movimiento de cada articulación es controlado por un servomotor de tipo hobby, los cuales son controlados mediante señales PWM (Pulse Width Modulation) generadas por la placa Arduino. 
+ El movimiento de cada articulación proviene de servomotores de tipo hobby, los cuales son controlados mediante señales PWM (Pulse Width Modulation) generadas por la placa Arduino. 
  \ Los servomotores se encuentran catalogados por número ascendente desde la base hasta la pinza, siendo el SR 431 el encargado de mover las primeras cuatro articulaciones y el SR 311 los dos últimos, tal como se muestra en la @tab-servos. 
  
 
@@ -296,7 +296,7 @@ La estructura del robot se compone por:
 
 
  #pagebreak()
- Adicionalmente a ello, en el kit se incluye una placa de expansión (shield) que permite conectar los servomotores y otros componentes electrónicos de manera sencilla y ordenada. Esta placa se conecta a una placa Arduino Uno y proporciona los pines necesarios para la conexión de los servos, así como una interfaz para la alimentación y el control de los mismos. Sus características técnicas se describen en la @tab-shield.
+ Adicionalmente a ello, en el kit se incluye una placa de expansión (shield) que permite conectar los servomotores y otros componentes electrónicos de manera sencilla y ordenada. Esta placa se conecta a una placa Arduino UNO y proporciona los pines necesarios para la conexión de los servos, así como una interfaz para la alimentación y el control de los mismos. Sus características técnicas se describen en la @tab-shield.
 
   #linebreak()
   #figure(
@@ -315,8 +315,8 @@ La estructura del robot se compone por:
   )<tab-shield>
 
 #col2(
-    figure(align(image("template/figures/shield.jpeg", width: 100%), center), caption: [Placa de expansión (shield) utilizada para la conexión de los servomotores. En ella se puede visualizar la disposición de los pines naranjas etiquetados con la numeración correspondiente]),
-    figure(align(image("template/figures/Arduino_Uno.jpg", width: 72%), center), caption: [Placa Arduino Uno utilizada como controlador principal del robot Braccio Tinkerkit.]
+    figure(align(image("template/figures/shield.jpeg", width: 100%), center), caption: [Placa de expansión encargada del conexionado de los servomotores. En ella se puede visualizar la disposición de los pines naranjas etiquetados con la numeración correspondiente]),
+    figure(align(image("template/figures/Arduino_Uno.jpg", width: 72%), center), caption: [Placa Arduino UNO utilizada como controlador principal del robot Braccio Tinkerkit.]
   ),
 )
 
@@ -351,10 +351,10 @@ La placa Arduino UNO es la base del sistema y encargada de la comunicación entr
 
 
 = Plataformas de desarrollo y simulación
-  El manipulador Braccio Tinkerkit forma parte del ecosistema Arduino, tal como se ha mencionado previamente. Debido a esta característica, puede ser simulado y controlado a través de diversas plataformas, destacando Matlab y ROS; siendo Gazebo, MoveIt y PyBullet las principales herramientas de simulación a destacar.
+  El manipulador Braccio Tinkerkit forma parte del ecosistema Arduino, tal como se ha mencionado previamente. Debido a esta característica, puede ser simulado y controlado a través de diversas plataformas, destacando Matlab y ROS; y siendo Gazebo y PyBullet las principales herramientas de simulación a destacar.
   == Plataformas de desarrollo
   === Matlab
-  Matlab/Simulink es un entorno de computación numérica y programación que ofrece un ecosistema integrado para el diseño, la simulación y la implementación de sistemas, incluyendo aplicaciones de robótica. A través de toolboxes específicos como _Robotics System Toolbox_ y _Simscape_ proporciona un entorno gráfico y basado en scripts para modelar y simular robots @simscape.
+  Matlab/Simulink es un entorno de computación numérica y programación que ofrece un ecosistema integrado para el diseño, la simulación y la implementación de sistemas, incluyendo aplicaciones de robótica. A través de toolboxes específicos como _Robotics System Toolbox_ y _Simscape_ proporciona un entorno gráfico basado en scripts para modelar y simular robots @simscape.
 
   === ROS
   ROS (Robot Operating System) es un framework de código abierto caracterizado por ser el estándar para la investigación y el desarrollo en robótica. Facilita la comunicación y la gestión de procesos en un robot a través de un modelo de "nodos" que se comunican de forma centralizada @melodic.
@@ -366,10 +366,11 @@ La placa Arduino UNO es la base del sistema y encargada de la comunicación entr
 
 === Comparativa de las plataformas
 
-  #figure(table(
+  #figure(
+    table(
     columns: (auto, auto, auto, auto),
     inset: 6pt,
-    align: horizon,
+    align: center + horizon,
     [Característica], [MATLAB], [ROS], [ROS2],
 
     [Curva de Aprendizaje], [Baja. Entorno gráfico muy intuitivo, visual y didáctico.], [Media. Requiere aprender conceptos (nodos, tópicos, servicios), la compilación catkin y el uso de la terminal.], [Alta. Similar a ROS1 pero con herramientas y conceptos más modernos.],
@@ -388,7 +389,7 @@ La placa Arduino UNO es la base del sistema y encargada de la comunicación entr
   ), caption: "Tabla comparativa entre MATLAB, ROS y ROS2 como opciones para la simulación y control del manipulador.")
 #linebreak()
 Tras comparar estas tres vertientes y en función de los objetivos formativos y profesionales planteados, la elección recomendada es ROS 2.
-El mayor problema del mismo recae en su complejidad, pues requiere de una mayor inversión inicial de tiempo para aprender sus herramientas y conceptos, así como de la instalación de un sistema operativo (Ubuntu) y los paquetes necesarios para su funcionamiento (ROS 2 Humble, Gazebo, RViz, MoveIt2, etc). 
+El mayor problema del mismo recae en su complejidad, pues requiere de una mayor inversión inicial de tiempo para aprender sus herramientas y conceptos, así como de la instalación de un sistema operativo (Ubuntu 22.04) y los paquetes necesarios para su funcionamiento (ROS 2 Humble, Gazebo, RViz2, MoveIt2, etc). 
 \ Sin embargo, aporta ventajas claras como su arquitectura descentralizada, un mejor soporte para requisitos de fiabilidad y tiempo real, integración con MoveIt2 y un ecosistema creciente orientado a la robótica profesional y de investigación.
 
 
@@ -433,12 +434,11 @@ No obstante, para el proyecto actual, se ha optado por la combinación de Gazebo
 
 
 = Diseño del sistema
-  El sistema propuesto integra un robot manipulador Braccio Tinkerkit, controlado por una placa Arduino UNO, con un entorno de simulación en ROS 2 Humble. El flujo de datos y control se estructura en varios nodos ROS 2 que gestionan la percepción, planificación y ejecución de movimientos, tanto en simulación como en el robot físico.
+  El sistema propuesto integra un robot manipulador Braccio Tinkerkit, controlado por una placa Arduino UNO, con un entorno de simulación en ROS 2 Humble. El flujo de datos y control se estructura en varios nodos que gestionan la percepción, planificación y ejecución de movimientos, tanto en simulación como en el robot físico.
      
 == Repositorio ROS2 Braccio
-El repositorio base seleccionado para el desarrollo del sistema es el creado por el usuario jaMulet @repo, debido principalmente a su estructura modular y funcional para la simulación y control del Braccio Tinkerkit en ROS 2. 
-
-Está organizado en varios paquetes que gestionan diferentes aspectos del sistema, siendo éstos: 
+El repositorio base seleccionado para el desarrollo del sistema ha sido el confeccionado por el usuario jaMulet @repo, debido principalmente a su estructura modular y funcional para la simulación y control del Braccio Tinkerkit en ROS 2.
+\ Se encuentra organizado en varios paquetes que gestionan diferentes aspectos del sistema, siendo éstos: 
 + Braccio_bringup: Paquete principal para lanzar los nodos necesarios para controlar el robot, tanto en simulación como en el hardware real.
 
 + Braccio_description: Contiene la descripción del robot en formato URDF, lo que permite su visualización y uso en herramientas como RViz.
@@ -447,7 +447,7 @@ Está organizado en varios paquetes que gestionan diferentes aspectos del sistem
 
 + Braccio_moveit_config: Configuración para el uso de MoveIt2, mediante la implementación de los controladores del brazo y la pinza.
 
-+ Braccio_ROS_Arduino: Contiene la biblioteca para implementar la interfaz de hardware del robot, basada en comunicación serial. Para el control de tareas se encuentra implementado un programador de éstas basado en la biblioteca TaskScheduler @task.
++ Braccio_ROS_Arduino: Contiene la biblioteca para implementar la interfaz de hardware del robot, basada en comunicación serial. Para el control de tareas se encuentra implementado un programador basado en la biblioteca TaskScheduler @task.
 
 #linebreak()
 
@@ -465,14 +465,13 @@ Está organizado en varios paquetes que gestionan diferentes aspectos del sistem
 
 El repositorio está diseñado para funcionar con dos modos, seleccionables en el lanzamiento del sistema:
 - Simulación: Utiliza Gazebo para crear un entorno virtual con el robot Braccio. Esto permite probar la lógica de control y la planificación de movimientos sin necesidad del hardware físico. Se activa con el argumento "sim:=true".
-- Hardware Real: Se comunica directamente con el robot Braccio a través de una conexión serie con una placa Arduino. El paquete _braccio_hardware_ gestiona esta comunicación, mediante el argumento "sim:=false". Adicionalmente incluye una opción para probar la comunicación con el hardware, mediante "hw_test:=true".
+- Hardware Real: Se comunica directamente con el robot Braccio a través de una conexión serie con la placa Arduino. El paquete _braccio_hardware_ gestiona esta comunicación, mediante el argumento "sim:=false". Adicionalmente incluye una opción para probar la comunicación con el hardware, mediante "hw_test:=true".
 
 
 
 == Extensiones y mejoras implementadas
   El repositorio original ha sido modificado y ampliado para incluir las nuevas funcionalidades que permitan lograr los objetivos propuestos, mejorar la experiencia de usuario y mantener esa modularidad característica, reflejando ese trabajo en el siguiente repositorio @my_repo. 
-
-  Se han añadido dos nuevos paquetes principales:
+\ Se han añadido tres nuevos paquetes principales:
 
 + Braccio_gamepad_teleop: Permite el control del robot mediante un mando conectado a través del puerto serie. Se ha implementado el mapeo de los botones y joysticks del mando a comandos específicos para mover las articulaciones del robot, tanto en simulación como en el hardware real, utilizando un mando de PlayStation 4 para las pruebas.
 
@@ -486,8 +485,7 @@ Estas implementaciones se tratarán en detalle en las siguientes secciones, expl
 
 == Entorno de simulación
 El entorno donde el robot opera se define en el archivo _braccio.world_, ubicado en la carpeta _gazebo_ de _braccio_description_. Este archivo actúa como el escenario virtual en el que el robot Braccio interactúa con otros objetos y el entorno. Su función es establecer todo lo que existe en el mundo antes de que el manipulador aparezca.
-
-En el siguiente se especifican varios elementos clave:
+\ En el siguiente se especifican varios elementos clave:
 - Define la gravedad del mundo, estableciendo el terreno y la luminosidad del mismo a través de un modelo de sol. 
 - Incluye dos modelos estáticos de forma hexagonal de colores verde y azul, como superficies para el depósito de los objetos.
 - Registra los plugins _gazebo_ros_state_ y _gazebo_link_attacher_,  necesarios para la obtención de la posición de cada objeto en tiempo real y para la simulación del agarre de los objetos, respectivamente.
@@ -540,7 +538,7 @@ En la carpeta _braccio_gamepad_teleop_ se encuentra el nodo principal encargado 
 Para la realización de este sistema de teleoperación se ha optado por una filosofía basada en el control incremental directo en el espacio de articulación. Este sistema implica dos acciones fundamentales:
 \
 \
-+ Los joysticks no controlan el movimiento de la pinza en un eje XYZ, sino que controlan directamente la velocidad de rotación de las articulaciones individuales del robot. En @joystick, se explica la diferencia entre utilizar este control directo (JointJog), frente al uso de un sistema basado en la cinemática inversa (TwistStamped).
++ Los joysticks no controlan el movimiento de la pinza en un eje XYZ, sino que controlan directamente la velocidad de rotación de las articulaciones individuales del robot. En el siguiente documento @joystick, se explica la diferencia entre utilizar este control directo (JointJog), frente al uso de un sistema basado en la cinemática inversa (TwistStamped).
 
 + El nodo mantiene una variable interna, _self.current_joint_positions_, que almacena la posición objetivo actual de cada articulación. De este modo, cada vez que se mueve el joystick, el nodo no establece una posición fija, sino que añade o resta un pequeño incremento a la posición actual, permitiendo un movimiento del robot mucho más fluido y suave. En la @fig-base se muestra dicho incremento de una forma mucho más clara.
 
@@ -606,7 +604,7 @@ de un sistema de control basado en visión del manipulador real.
 \
 #figure(
   align(image("template/figures/atach.png", width: 100%), center),
-  caption: [Servicio de Gazebo para el pick and place de objetos mediante el plugin gazebo_link_attacher. En la imagen se observa la petición de attach al servicio, el cálculo de las distancias respecto la posición del gripper y los cubos; y tras la verificación del umbral de cercanía, la ejecución de la acción entre la pinza y el blue_cube1.]
+  caption: [Servicio de Gazebo para el pick and place de objetos mediante el plugin _gazebo_link_attacher.so_. En la imagen se observa la petición de attach al servicio, el cálculo de las distancias respecto la posición del gripper y los cubos; y tras la verificación del umbral de cercanía, la ejecución de la acción entre la pinza y el blue_cube1.]
 ) <fig-attach>
 
 
